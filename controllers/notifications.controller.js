@@ -7,15 +7,19 @@ export const getNotification = (req, res, next) => {
 };
 
 export const createNotification = (req, res, next) => {
+  const data = req.body;
   res.json({
     success: true,
+    data,
     message: "Create Notification",
   });
 };
 
 export const updateNotification = (req, res, next) => {
+  const data = req.body;
   res.json({
     success: true,
+    data,
     message: "Update Notification",
     id: req.params.id,
   });

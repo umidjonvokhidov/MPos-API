@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import Notification from "./notification.model";
+import Notification from "./notification.model.js";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -24,8 +25,8 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      required: [true, "Phone number is required"],
       unique: true,
+      sparse: true,
       trim: true,
       match: [
         /^\+?[1-9]\d{1,14}$/,
@@ -35,9 +36,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [8, "Password must be at least 8 characters long"],
-      maxlength: [32, "Password must be less than 32 characters long"],
-      select: false,
     },
     settings: {
       language: {
@@ -104,19 +102,16 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save", async (next) => {
-  if (!this.isModified("password")) return next();
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
-
-userSchema.pre("save", async (next) => {
   if (this.isNew) {
-    Notification.create({
+    await Notification.create({
       user: this._id,
-      title: "",
-      message: "",
+      title: "Welcome!",
+      message: "Your account has been created.",
       type: "system",
     });
   }

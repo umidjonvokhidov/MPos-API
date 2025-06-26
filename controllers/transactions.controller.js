@@ -7,11 +7,13 @@ export const getTransaction = (req, res, next) => {
 };
 
 export const createTransaction = (req, res, next) => {
-  res.json({ success: true, message: "Create Transaction" });
+  const data = req.body;
+  res.json({ success: true, data, message: "Create Transaction" });
 };
 
 export const updateTransaction = (req, res, next) => {
-  res.json({ success: true, message: "Update Transaction", id: req.params.id });
+  const data = req.body;
+  res.json({ success: true, data, message: "Update Transaction", id: req.params.id });
 };
 
 export const deleteTransaction = (req, res, next) => {

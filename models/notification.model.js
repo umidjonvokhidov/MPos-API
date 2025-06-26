@@ -21,7 +21,7 @@ const notificationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["unreal", "read"],
+      enum: ["unread", "read"],
       default: "unread",
     },
     type: {

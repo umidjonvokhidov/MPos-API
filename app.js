@@ -11,8 +11,10 @@ import usersRouter from "./routes/users.routes.js";
 import productsRouter from "./routes/products.routes.js";
 import transactionsRouter from "./routes/transactions.routes.js";
 import notificationsRouter from "./routes/notifications.routes.js";
+import connectDB from "./config/mongodb.js";
 
 const app = express();
+connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -26,7 +28,6 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-app.use(errorMiddleware);
 
 app.use("/api/v1/auth/", authRouter);
 app.use("/api/v1/users/", usersRouter);
@@ -34,6 +35,7 @@ app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/transactions", transactionsRouter);
 app.use("/api/v1/notifications", notificationsRouter);
 
+app.use(errorMiddleware);
 app.get("/", (req, res) => {
   res.json({ title: "MPos Restaurant API" });
 });

@@ -8,4 +8,7 @@ export const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   STRIPE_API_KEY,
+  JWT_SECRET,
+  JWT_EXPIRES_IN,
+  MONGO_URI,
 } = process.env;
