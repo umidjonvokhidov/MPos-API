@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { STRIPE_API_KEY } from "../config/env";
+import { STRIPE_API_KEY } from "./env";
 
 const stripe = Stripe(STRIPE_API_KEY);
 

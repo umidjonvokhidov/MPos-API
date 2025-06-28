@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema(
   {
-    customer: {
-      type: String,
-      required: [true, "Customer name is required"],
-      trim: true,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "User is required"],
     },
     typeService: {
       type: String,
@@ -67,8 +67,6 @@ const transactionSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
 

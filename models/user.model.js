@@ -9,8 +9,7 @@ const userSchema = new mongoose.Schema(
     profilePicture: String,
     role: {
       type: String,
-      enum: ["waiter", "chef", "customer", "admin"],
-      default: "customer",
+      enum: ["waiter", "chef", "admin"],
     },
     email: {
       type: String,
@@ -117,6 +116,16 @@ userSchema.pre("save", async function (next) {
   }
 
   next();
+});
+
+userSchema.post("findOneAndUpdate", async function (doc) {
+  if (doc) {
+    await Notification.create({
+      user: doc._id,
+      title: "Profile update",
+      message: "Profile data updated successfully",
+    });
+  }
 });
 
 userSchema.methods.comparePassword = function (plainPassword) {

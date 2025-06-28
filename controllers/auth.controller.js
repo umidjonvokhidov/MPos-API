@@ -19,22 +19,21 @@ export const SignUp = async (req, res, next) => {
     }
 
     const newUsers = await User.create(
-      [
-        {
-          firstname,
-          lastname,
-          email,
-          password,
-        },
-      ],
+      {
+        firstname,
+        lastname,
+        email,
+        password,
+      },
+
       { session }
     );
 
-    const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: newUsers._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
 
-    const refreshToken = jwt.sign({ id: newUsers[0]._id }, REFRESH_SECRET, {
+    const refreshToken = jwt.sign({ id: newUsers._id }, REFRESH_SECRET, {
       expiresIn: "7d",
     });
 
@@ -124,7 +123,7 @@ export const refreshTokenRoute = async (req, res, next) => {
     const accessToken = jwt.sign({ id: payload.id }, JWT_SECRET, {
       expiresIn: "15m",
     });
-    res.json({ accessToken });
+    res.status(200).json({ accessToken });
   } catch (error) {
     next(error);
   }

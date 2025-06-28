@@ -1,21 +1,98 @@
-export const getAllTransactions = (req, res, next) => {
-  res.json({ success: true, message: "Get All Transactions" });
+import Transaction from "../models/transaction.model.js";
+
+export const getAllTransactions = async (req, res, next) => {
+  try {
+    const transactions = await Transaction.find();
+
+    if (!transactions) {
+      const error = new Error("Transactions not found!");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: transactions,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getTransaction = (req, res, next) => {
-  res.json({ success: true, message: "Get Transaction", id: req.params.id });
+export const getTransaction = async (req, res, next) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      const error = new Error("Transaction not found for this ID");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: transaction,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const createTransaction = (req, res, next) => {
-  const data = req.body;
-  res.json({ success: true, data, message: "Create Transaction" });
+export const createTransaction = async (req, res, next) => {
+  try {
+    const transaction = await Transaction.create(req.body);
+
+    res.status(200).json({
+      success: true,
+      data: transaction,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const updateTransaction = (req, res, next) => {
-  const data = req.body;
-  res.json({ success: true, data, message: "Update Transaction", id: req.params.id });
+export const updateTransaction = async (req, res, next) => {
+  try {
+    const transaction = await Transaction.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!transaction) {
+      const error = new Error("Transaction not found for this ID");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Transaction updated successfully!",
+      data: transaction,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const deleteTransaction = (req, res, next) => {
-  res.json({ success: true, message: "Delete Transaction", id: req.params.id });
+export const deleteTransaction = async (req, res, next) => {
+  try {
+    const transaction = await Transaction.findByIdAndDelete(req.params.id);
+
+    if (!transaction) {
+      const error = new Error("Transaction not found for this ID");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Transaction deleted successfully!",
+    });
+  } catch (error) {
+    next(error);
+  }
 };

@@ -1,3 +1,4 @@
+import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 import fs from "fs";
 
@@ -12,7 +13,7 @@ export const getAllUsers = async (req, res, next) => {
       throw error;
     }
 
-    res.json({ success: true, count: userCount, data: users });
+    res.status(200).json({ success: true, count: userCount, data: users });
   } catch (error) {
     next(error);
   }
@@ -28,7 +29,7 @@ export const getUser = async (req, res, next) => {
       throw error;
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: user,
       message: `User with id: ${user._id}`,
@@ -89,7 +90,9 @@ export const updateUser = async (req, res, next) => {
     throw error;
   }
 
-  res.json({ success: true, data: user, message: "User updated succesfully!" });
+  res
+    .status(200)
+    .json({ success: true, data: user, message: "User updated succesfully!" });
 };
 
 export const deleteUser = async (req, res, next) => {
@@ -126,13 +129,13 @@ export const getUserSettings = async (req, res, next) => {
       throw error;
     }
 
-    if (user?.settings) {
-      res.json({ success: true, data: user.settings });
-    } else {
+    if (!user.settings) {
       const error = new Error("User settings not found!");
       error.statusCode = 404;
       throw error;
     }
+
+    res.status(200).json({ success: true, data: user.settings,message: `Settings for the user ID: ${user._id}`, });
   } catch (error) {
     next(error);
   }
@@ -157,7 +160,7 @@ export const updateUserSettings = async (req, res, next) => {
       throw error;
     }
 
-    res.json({ success: true, data: user.settings });
+    res.status(200).json({ success: true, data: user.settings });
   } catch (error) {
     next(error);
   }
