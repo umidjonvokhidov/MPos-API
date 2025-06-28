@@ -10,5 +10,6 @@ export const {
   STRIPE_API_KEY,
   JWT_SECRET,
   JWT_EXPIRES_IN,
+  REFRESH_SECRET,
   MONGO_URI,
 } = process.env;

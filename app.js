@@ -35,6 +35,7 @@ app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/transactions", transactionsRouter);
 app.use("/api/v1/notifications", notificationsRouter);
 
+
 app.use(errorMiddleware);
 app.get("/", (req, res) => {
   res.json({ title: "MPos Restaurant API" });

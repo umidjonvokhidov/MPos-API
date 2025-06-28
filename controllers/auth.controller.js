@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js";
-import bcrypt from "bcryptjs";
+import { JWT_EXPIRES_IN, JWT_SECRET, REFRESH_SECRET } from "../config/env.js";
 
 export const SignUp = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -35,6 +34,17 @@ export const SignUp = async (req, res, next) => {
       expiresIn: JWT_EXPIRES_IN,
     });
 
+    const refreshToken = jwt.sign({ id: newUsers[0]._id }, REFRESH_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     await session.commitTransaction();
     session.endSession();
 
@@ -65,7 +75,7 @@ export const SignIn = async (req, res, next) => {
       throw error;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
       const error = new Error("Password is not valid");
@@ -77,6 +87,17 @@ export const SignIn = async (req, res, next) => {
       expiresIn: JWT_EXPIRES_IN,
     });
 
+    const refreshToken = jwt.sign({ id: user._id }, REFRESH_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       success: true,
       message: "User signed in successfully",
@@ -85,6 +106,25 @@ export const SignIn = async (req, res, next) => {
         user,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const refreshTokenRoute = async (req, res, next) => {
+  const token = req.cookies.refreshToken;
+  if (!token) {
+    const error = new Error("Refresh token expired or deleted");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  try {
+    const payload = jwt.verify(token, REFRESH_SECRET);
+    const accessToken = jwt.sign({ id: payload.id }, JWT_SECRET, {
+      expiresIn: "15m",
+    });
+    res.json({ accessToken });
   } catch (error) {
     next(error);
   }
@@ -101,7 +141,11 @@ export const authorize = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
     }
 
-    if (!token) return res.status(401).json({ message: "Unauthorized" });
+    if (!token) {
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
+      throw error;
+    }
 
     const decoded = jwt.verify(token, JWT_SECRET);
 
@@ -110,8 +154,6 @@ export const authorize = async (req, res, next) => {
     if (!user) return res.status(401).json({ message: "Unauthorized" });
 
     req.user = user;
-
-    next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized", error: error.message });
     next(error);
@@ -119,7 +161,12 @@ export const authorize = async (req, res, next) => {
 };
 
 export const SignOut = (req, res, next) => {
-  res.json({ success: true, message: "Sign Out" });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: true,
+  });
+  res.status(200).json({ success: true, message: "Logged out" });
 };
 
 export const GoogleAuth = (req, res, next) => {
