@@ -19,12 +19,23 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-app.use(helmet());
-app.use(morgan("dev"));
+app.use(
+  helmet({
+    contentSecurityPolicy:
+      process.env.NODE_ENV === "production"
+        ? {
+            directives: {
+              defaultSrc: ["'self'"],
+            },
+          }
+        : false,
+  })
+);
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  limit: process.env.NODE_ENV === "production" ? 50 : 100,
 });
 
 app.use(limiter);
@@ -35,13 +46,12 @@ app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/transactions", transactionsRouter);
 app.use("/api/v1/notifications", notificationsRouter);
 
-
 app.use(errorMiddleware);
 app.get("/", (req, res) => {
   res.json({ title: "MPos Restaurant API" });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`MPos API is running on http://localhost:${PORT}`);
   console.log(process.env.NODE_ENV);
 });
