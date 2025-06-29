@@ -92,7 +92,7 @@ export const updateNotification = async (req, res, next) => {
 
 export const deleteNotification = async (req, res, next) => {
   try {
-    const notification = Notification.findByIdAndDelete(req.params.id);
+    const notification = await Notification.findByIdAndDelete(req.params.id);
 
     if (!notification) {
       const error = new Error("Notification not found for this id");
@@ -110,7 +110,7 @@ export const deleteNotification = async (req, res, next) => {
 
 export const markAllNotificationsRead = async (req, res, next) => {
   try {
-    const notifications = Notification.updateMany(
+    const notifications = await Notification.updateMany(
       { user: req.params.id, status: "unread" },
       { $set: { status: "read" } }
     );

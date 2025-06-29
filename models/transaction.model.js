@@ -1,11 +1,17 @@
 import mongoose from "mongoose";
+import Notification from "./notification.model.js";
 
 const transactionSchema = new mongoose.Schema(
   {
-    user: {
+    userID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User is required"],
+    },
+    fullname: {
+      type: String,
+      required: [true, "Fullname is required"],
+      maxlength: [100, "Fullname must be less than 100 characters"],
     },
     typeService: {
       type: String,
@@ -52,9 +58,9 @@ const transactionSchema = new mongoose.Schema(
       default: "pending",
     },
     paymentDetails: {
-      stripePaymentId: { type: String },
+      PaymentId: { type: String },
       receiptUrl: { type: String },
-      gatewayResponse: { type: Object },
+      gatewayResponse: mongoose.Schema.Types.Mixed,
     },
   },
   {
@@ -67,6 +73,33 @@ const transactionSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+transactionSchema.pre("save", async function (next) {
+  if (this.isModified("status")) {
+    const statusMessages = {
+      pending: "Your order is being processed",
+      completed: "Your order has been completed successfully!",
+      declined: "Your order has been declined",
+    };
+
+    const statusTitles = {
+      pending: "Order Processing",
+      completed: "Order Completed",
+      declined: "Order Declined",
+    };
+
+    await Notification.create({
+      user: this.userID,
+      title: statusTitles[this.status] || "Order Status Update",
+      message:
+        statusMessages[this.status] ||
+        `Your order status has been updated to ${this.status}`,
+      type: "order_status",
+    });
+  }
+
+  next();
+});
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
 

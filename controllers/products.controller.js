@@ -1,4 +1,5 @@
 import Product from "../models/product.model.js";
+import fs from "fs";
 
 export const getAllProducts = async (req, res, next) => {
   try {
@@ -56,7 +57,7 @@ export const updateProduct = async (req, res, next) => {
   try {
     if (req.file && req.file.path) {
       req.body.image = req.file.path;
-      const OldProduct = await Notification.findById(req.params.id);
+      const OldProduct = await Product.findById(req.params.id);
       if (OldProduct.image) {
         const filePath = OldProduct.image;
         if (fs.existsSync(filePath)) {

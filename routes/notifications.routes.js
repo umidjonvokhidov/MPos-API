@@ -8,15 +8,22 @@ import {
   getNotificationByUser,
   markAllNotificationsRead,
 } from "../controllers/notifications.controller.js";
+import { authorize, requireAdmin, authorizeOwnResource } from "../middlewares/auth.middleware.js";
 
 const notificationsRouter = Router();
 
-notificationsRouter.get("/", getAllNotifications);
-notificationsRouter.get("/:id", getNotification);
-notificationsRouter.get("/user/:id", getNotificationByUser);
-notificationsRouter.post("/", createNotification);
-notificationsRouter.post("/markAllasRead/:id", markAllNotificationsRead);
-notificationsRouter.put("/:id", updateNotification);
-notificationsRouter.delete("/:id", deleteNotification);
+// All notification routes require authentication
+notificationsRouter.use(authorize);
+
+// Admin only routes
+notificationsRouter.get("/", requireAdmin, getAllNotifications);
+notificationsRouter.post("/", requireAdmin, createNotification);
+notificationsRouter.delete("/:id", requireAdmin, deleteNotification);
+
+// Users can access their own notifications
+notificationsRouter.get("/user/:id", authorizeOwnResource("id"), getNotificationByUser);
+notificationsRouter.get("/:id", authorizeOwnResource("user"), getNotification);
+notificationsRouter.put("/:id", authorizeOwnResource("user"), updateNotification);
+notificationsRouter.post("/markAllasRead/:id", authorizeOwnResource("id"), markAllNotificationsRead);
 
 export default notificationsRouter;

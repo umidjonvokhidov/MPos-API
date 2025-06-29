@@ -6,13 +6,26 @@ import {
   updateTransaction,
   deleteTransaction,
 } from "../controllers/transactions.controller.js";
+import { authorize, requireWaiter, authorizeOwnResource } from "../middlewares/auth.middleware.js";
 
 const transactionsRouter = Router();
 
-transactionsRouter.get("/", getAllTransactions);
-transactionsRouter.get("/:id", getTransaction);
+// All transaction routes require authentication
+transactionsRouter.use(authorize);
+
+// Waiter and above can view all transactions
+transactionsRouter.get("/", requireWaiter, getAllTransactions);
+
+// Users can create transactions (for customers)
 transactionsRouter.post("/", createTransaction);
-transactionsRouter.put("/:id", updateTransaction);
-transactionsRouter.delete("/:id", deleteTransaction);
+
+// Users can view their own transactions or waiters can view any
+transactionsRouter.get("/:id", authorizeOwnResource("userID"), getTransaction);
+
+// Waiter and above can update transactions
+transactionsRouter.put("/:id", requireWaiter, updateTransaction);
+
+// Admin only can delete transactions
+transactionsRouter.delete("/:id", requireWaiter, deleteTransaction);
 
 export default transactionsRouter;

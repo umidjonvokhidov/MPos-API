@@ -2,13 +2,11 @@ import Transaction from "../models/transaction.model.js";
 
 export const getAllTransactions = async (req, res, next) => {
   try {
-    const transactions = await Transaction.find();
+    const filter = {};
 
-    if (!transactions) {
-      const error = new Error("Transactions not found!");
-      error.statusCode = 404;
-      throw error;
-    }
+    const { type_service, product_category } = req.query;
+
+    const transactions = await Transaction.find();
 
     res.status(200).json({
       success: true,

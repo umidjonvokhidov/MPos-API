@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Notification from "./notification.model.js";
 
 const productSchema = new mongoose.Schema(
   {
@@ -54,6 +55,18 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+productSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    await Notification.create({
+      user: this.createdBy,
+      title: "Product created!",
+      message: "Your product has been created!",
+      type: "system",
+    });
+  }
+  next();
+});
 
 const Product = mongoose.model("Product", productSchema);
 

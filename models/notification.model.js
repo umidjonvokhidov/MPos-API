@@ -5,7 +5,7 @@ const notificationSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      requried: [true, "User reference is required"],
+      required: [true, "User reference is required"],
     },
     title: {
       type: String,

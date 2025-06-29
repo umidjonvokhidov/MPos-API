@@ -1,19 +1,11 @@
-import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 import fs from "fs";
 
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
-    const userCount = await User.find().countDocuments();
 
-    if (!users) {
-      const error = new Error("Users not found!");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.status(200).json({ success: true, count: userCount, data: users });
+    res.status(200).json({ success: true, data: users });
   } catch (error) {
     next(error);
   }
@@ -135,7 +127,11 @@ export const getUserSettings = async (req, res, next) => {
       throw error;
     }
 
-    res.status(200).json({ success: true, data: user.settings,message: `Settings for the user ID: ${user._id}`, });
+    res.status(200).json({
+      success: true,
+      data: user.settings,
+      message: `Settings for the user ID: ${user._id}`,
+    });
   } catch (error) {
     next(error);
   }

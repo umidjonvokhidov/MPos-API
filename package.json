@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node app.js",
-    "dev": "cross-env NODE_ENV=development nodemon app.js"
+    "dev": "cross-env NODE_ENV=development nodemon app.js",
+    "test": "node test-api.js"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +37,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.0",
     "globals": "^16.2.0",
+    "node-fetch": "^3.3.2",
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3"
   }
