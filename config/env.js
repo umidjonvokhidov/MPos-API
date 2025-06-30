@@ -12,4 +12,7 @@ export const {
   JWT_EXPIRES_IN,
   REFRESH_SECRET,
   MONGO_URI,
+  SMTP_USER,
+  SMTP_PASS,
+  SMTP_PORT,
 } = process.env;

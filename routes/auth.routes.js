@@ -17,7 +17,7 @@ authRouter.post("/sign-up", SignUp);
 authRouter.post("/sign-in", SignIn);
 authRouter.post("/sign-out", SignOut);
 authRouter.post("/forgot-password", forgotPassword);
-authRouter.post("/reset-password/:token", resetPassword);
+authRouter.post("/reset-password/", resetPassword);
 authRouter.post("/refresh-token", refreshTokenRoute);
 authRouter.post("/google", GoogleAuth);
 authRouter.post("/google/callback", GoogleAuthCallback);

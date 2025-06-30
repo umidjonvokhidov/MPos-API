@@ -3,6 +3,8 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { JWT_EXPIRES_IN, JWT_SECRET, REFRESH_SECRET } from "../config/env.js";
 import otpGenerator from "otp-generator";
+import crypto from "crypto";
+import { sendMail } from "../utils/email.js";
 
 export const SignUp = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -179,12 +181,65 @@ export const forgotPassword = async (req, res, next) => {
       throw error;
     }
 
-    // const otp
+    const otp = otpGenerator.generate(6, {
+      digits: true,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
+
+    user.resetOTP = hashedOTP;
+    user.resetOTPExpires = Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+    await sendMail(
+      user.email,
+      "Your OTP Code",
+      `<h3>Your OTP code is <strong>${otp}</strong></h3><p>This code expires in 10 minutes.</p>`
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `OTP send to email ${user.email}`,
+    });
   } catch (error) {
     next(error);
   }
 };
-export const resetPassword = (req, res, next) => {};
+export const resetPassword = async (req, res, next) => {
+  const { email, otp, newPassword } = req.body;
+
+  const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
+
+  try {
+    const user = await User.findOne({
+      email,
+      resetOTP: hashedOTP,
+      resetOTPExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      const error = new Error("OTP invalid or expired!");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    user.password = newPassword;
+    user.resetOTP = undefined;
+    user.resetOTPExpires = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const GoogleAuth = (req, res, next) => {
   res.json({ success: true, message: "Google Auth" });
