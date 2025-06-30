@@ -88,6 +88,8 @@ const userSchema = new mongoose.Schema(
         },
       },
     },
+    resetOTP: String,
+    resetOTPExpires: String,
   },
   {
     toJSON: {

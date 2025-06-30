@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { JWT_EXPIRES_IN, JWT_SECRET, REFRESH_SECRET } from "../config/env.js";
+import otpGenerator from "otp-generator";
 
 export const SignUp = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -167,6 +168,23 @@ export const SignOut = (req, res, next) => {
   });
   res.status(200).json({ success: true, message: "Logged out" });
 };
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // const otp
+  } catch (error) {
+    next(error);
+  }
+};
+export const resetPassword = (req, res, next) => {};
 
 export const GoogleAuth = (req, res, next) => {
   res.json({ success: true, message: "Google Auth" });
