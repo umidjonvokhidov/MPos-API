@@ -25,14 +25,14 @@ authRouter.get(
 );
 authRouter.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/api/v1/auth/sign-in" }),
+  passport.authenticate("google", { failureRedirect: "/api/v1/" }),
   OAuthCallback
 );
 
 authRouter.get("/apple", passport.authenticate("apple"));
 authRouter.post(
   "/apple/callback",
-  passport.authenticate("apple", { failureRedirect: "/api/v1/auth/sign-in" }),
+  passport.authenticate("apple", { failureRedirect: "/api/v1/" }),
   OAuthCallback
 );
 
