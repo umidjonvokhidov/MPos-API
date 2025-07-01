@@ -241,14 +241,29 @@ export const resetPassword = async (req, res, next) => {
   }
 };
 
-export const GoogleAuth = (req, res, next) => {
-  res.json({ success: true, message: "Google Auth" });
-};
-
-export const GoogleAuthCallback = (req, res, next) => {
-  res.json({ success: true, message: "Google Auth Callback" });
-};
-
-export const AppleAuth = (req, res, next) => {
-  res.json({ success: true, message: "Apple Auth" });
+export const OAuthCallback = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'Authentication failed' });
+  }
+  // Issue JWT and refresh token
+  const token = jwt.sign({ userId: req.user._id }, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+  });
+  const refreshToken = jwt.sign({ id: req.user._id }, REFRESH_SECRET, {
+    expiresIn: '7d',
+  });
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.status(200).json({
+    success: true,
+    message: 'Authentication successful',
+    data: {
+      token,
+      user: req.user,
+    },
+  });
 };

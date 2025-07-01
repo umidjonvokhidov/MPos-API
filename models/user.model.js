@@ -2,6 +2,19 @@ import mongoose from "mongoose";
 import Notification from "./notification.model.js";
 import bcrypt from "bcryptjs";
 
+export const providerSchema = new mongoose.Schema(
+  {
+    provider: String,
+    providerId: String,
+    email: String,
+    name: String,
+    picture: String,
+  },
+  {
+    _id: false,
+  }
+);
+
 const userSchema = new mongoose.Schema(
   {
     firstname: String,
@@ -22,6 +35,7 @@ const userSchema = new mongoose.Schema(
       ],
       lowercase: true,
     },
+    linkedAccounts: [providerSchema],
     phoneNumber: {
       type: String,
       unique: true,

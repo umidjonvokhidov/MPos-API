@@ -12,6 +12,8 @@ import productsRouter from "./routes/products.routes.js";
 import transactionsRouter from "./routes/transactions.routes.js";
 import notificationsRouter from "./routes/notifications.routes.js";
 import connectDB from "./config/mongodb.js";
+import session from "express-session";
+import passport from "./config/passport.js";
 
 const app = express();
 connectDB();
@@ -39,6 +41,15 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || "your-session-secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }, // Set to true if using HTTPS
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/v1/auth/", authRouter);
 app.use("/api/v1/users/", usersRouter);

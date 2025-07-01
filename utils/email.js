@@ -1,4 +1,5 @@
 import { SMTP_USER, SMTP_PASS, SMTP_PORT } from "../config/env.js";
+import nodemailer from "nodemailer";
 
 export const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
