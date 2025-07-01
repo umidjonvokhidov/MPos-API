@@ -48,7 +48,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
     },
     settings: {
       language: {
@@ -131,6 +130,14 @@ userSchema.pre("save", async function (next) {
     });
   }
 
+  next();
+});
+
+userSchema.pre("validate", function (next) {
+  // Only require password if no OAuth providers are linked
+  if (!this.password && (!this.linkedAccounts || this.linkedAccounts.length === 0)) {
+    this.invalidate("password", "Password is required");
+  }
   next();
 });
 
