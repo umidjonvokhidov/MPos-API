@@ -1,8 +1,5 @@
 import { Router } from "express";
 import {
-  AppleAuth,
-  GoogleAuth,
-  GoogleAuthCallback,
   SignIn,
   SignOut,
   SignUp,
@@ -22,7 +19,10 @@ authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/", resetPassword);
 authRouter.post("/refresh-token", refreshTokenRoute);
 
-authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+authRouter.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/api/v1/auth/sign-in" }),
