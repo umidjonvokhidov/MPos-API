@@ -21,7 +21,6 @@ authRouter.post("/sign-out", SignOut);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/", resetPassword);
 authRouter.post("/refresh-token", refreshTokenRoute);
-authRouter.post("/apple", AppleAuth);
 
 authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 authRouter.get(
