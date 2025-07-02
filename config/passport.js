@@ -74,68 +74,68 @@ passport.use(
   )
 );
 
-passport.use(
-  new AppleStrategy(
-    {
-      clientID: APPLE_CLIENT_ID,
-      teamID: APPLE_TEAM_ID,
-      keyID: APPLE_KEY_ID,
-      privateKey: APPLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      callbackURL: APPLE_CALLBACK_URL,
-      passReqToCallback: false,
-    },
-    async (accessToken, refreshToken, idToken, profile, done) => {
-      try {
-        const appleId = idToken.sub;
-        const email = idToken.email;
-        const name = idToken.name || {};
-        let user = await User.findOne({
-          $or: [
-            { email },
-            { 'linkedAccounts.provider': 'apple', 'linkedAccounts.providerId': appleId },
-          ],
-        });
-        if (!user) {
-          user = await User.create({
-            firstname: name.givenName || '',
-            lastname: name.familyName || '',
-            email,
-            linkedAccounts: [
-              {
-                provider: 'apple',
-                providerId: appleId,
-                email,
-                name: `${name.givenName || ''} ${name.familyName || ''}`.trim(),
-                picture: '',
-              },
-            ],
-          });
-        } else {
-          // Add or update the apple provider entry
-          const existingProvider = user.linkedAccounts.find(p => p.provider === 'apple');
-          if (!existingProvider) {
-            user.linkedAccounts.push({
-              provider: 'apple',
-              providerId: appleId,
-              email,
-              name: `${name.givenName || ''} ${name.familyName || ''}`.trim(),
-              picture: '',
-            });
-            await user.save();
-          } else if (existingProvider.providerId !== appleId) {
-            existingProvider.providerId = appleId;
-            existingProvider.email = email;
-            existingProvider.name = `${name.givenName || ''} ${name.familyName || ''}`.trim();
-            await user.save();
-          }
-        }
-        return done(null, user);
-      } catch (err) {
-        return done(err, null);
-      }
-    }
-  )
-);
+// passport.use(
+//   new AppleStrategy(
+//     {
+//       clientID: APPLE_CLIENT_ID,
+//       teamID: APPLE_TEAM_ID,
+//       keyID: APPLE_KEY_ID,
+//       privateKey: APPLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+//       callbackURL: APPLE_CALLBACK_URL,
+//       passReqToCallback: false,
+//     },
+//     async (accessToken, refreshToken, idToken, profile, done) => {
+//       try {
+//         const appleId = idToken.sub;
+//         const email = idToken.email;
+//         const name = idToken.name || {};
+//         let user = await User.findOne({
+//           $or: [
+//             { email },
+//             { 'linkedAccounts.provider': 'apple', 'linkedAccounts.providerId': appleId },
+//           ],
+//         });
+//         if (!user) {
+//           user = await User.create({
+//             firstname: name.givenName || '',
+//             lastname: name.familyName || '',
+//             email,
+//             linkedAccounts: [
+//               {
+//                 provider: 'apple',
+//                 providerId: appleId,
+//                 email,
+//                 name: `${name.givenName || ''} ${name.familyName || ''}`.trim(),
+//                 picture: '',
+//               },
+//             ],
+//           });
+//         } else {
+//           // Add or update the apple provider entry
+//           const existingProvider = user.linkedAccounts.find(p => p.provider === 'apple');
+//           if (!existingProvider) {
+//             user.linkedAccounts.push({
+//               provider: 'apple',
+//               providerId: appleId,
+//               email,
+//               name: `${name.givenName || ''} ${name.familyName || ''}`.trim(),
+//               picture: '',
+//             });
+//             await user.save();
+//           } else if (existingProvider.providerId !== appleId) {
+//             existingProvider.providerId = appleId;
+//             existingProvider.email = email;
+//             existingProvider.name = `${name.givenName || ''} ${name.familyName || ''}`.trim();
+//             await user.save();
+//           }
+//         }
+//         return done(null, user);
+//       } catch (err) {
+//         return done(err, null);
+//       }
+//     }
+//   )
+// );
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
