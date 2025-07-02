@@ -48,7 +48,6 @@ passport.use(
             ],
           });
         } else {
-          // Add or update the google provider entry
           const existingProvider = user.linkedAccounts.find(p => p.provider === 'google');
           if (!existingProvider) {
             user.linkedAccounts.push({
@@ -87,7 +86,6 @@ passport.use(
     },
     async (accessToken, refreshToken, idToken, profile, done) => {
       try {
-        // Apple profile may be undefined, so use idToken for info
         const appleId = idToken.sub;
         const email = idToken.email;
         const name = idToken.name || {};

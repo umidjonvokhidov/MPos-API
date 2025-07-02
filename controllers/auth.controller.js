@@ -245,7 +245,6 @@ export const OAuthCallback = (req, res) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: 'Authentication failed' });
   }
-  // Issue JWT and refresh token
   const token = jwt.sign({ userId: req.user._id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
