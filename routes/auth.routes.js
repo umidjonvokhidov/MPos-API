@@ -29,11 +29,11 @@ authRouter.get(
   OAuthCallback
 );
 
-authRouter.get("/apple", passport.authenticate("apple"));
-authRouter.post(
-  "/apple/callback",
-  passport.authenticate("apple", { failureRedirect: "/api/v1/sign-in" }),
-  OAuthCallback
-);
+// authRouter.get("/apple", passport.authenticate("apple"));
+// authRouter.post(
+//   "/apple/callback",
+//   passport.authenticate("apple", { failureRedirect: "/api/v1/sign-in" }),
+//   OAuthCallback
+// );
 
 export default authRouter;
