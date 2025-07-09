@@ -21,7 +21,7 @@ usersRouter.post(
 );
 
 // Protected routes (auth required)
-usersRouter.use(authorize); // Apply auth to all routes below
+usersRouter.use(authorize); 
 
 // Admin only routes
 usersRouter.get("/", requireAdmin, getAllUsers);
