@@ -7,27 +7,24 @@ import {
   getUserSettings,
   updateUser,
   updateUserSettings,
+  getCurrentUser
 } from "../controllers/users.controller.js";
 import { uploadUserProfilePhoto } from "../utils/multer.js";
 import { authorize, requireAdmin, authorizeOwnResource } from "../middlewares/auth.middleware.js";
 
 const usersRouter = Router();
 
-// Public routes (no auth required)
 usersRouter.post(
   "/",
   uploadUserProfilePhoto.single("profilePicture"),
   createUser
 );
 
-// Protected routes (auth required)
-usersRouter.use(authorize); 
 
-// Admin only routes
+usersRouter.use(authorize); 
+usersRouter.get("/me",getCurrentUser); 
 usersRouter.get("/", requireAdmin, getAllUsers);
 usersRouter.delete("/:id", requireAdmin, deleteUser);
-
-// User can access their own data or admin can access any
 usersRouter.get("/:id", authorizeOwnResource("id"), getUser);
 usersRouter.put(
   "/:id",
