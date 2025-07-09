@@ -31,6 +31,17 @@ export const getUser = async (req, res, next) => {
   }
 };
 
+export const getCurrentUser = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createUser = async (req, res, next) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
