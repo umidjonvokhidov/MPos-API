@@ -265,4 +265,5 @@ export const OAuthCallback = (req, res) => {
       user: req.user,
     },
   });
+  res.redirect(`http://localhost:3000?token=${token}`);
 };
