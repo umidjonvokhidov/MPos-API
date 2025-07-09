@@ -259,13 +259,6 @@ export const OAuthCallback = (req, res) => {
     sameSite: 'Strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-  res.status(200).json({
-    success: true,
-    message: 'Authentication successful',
-    data: {
-      token,
-      user: req.user,
-    },
-  });
+  
   res.redirect(`http://localhost:3000?token=${token}`);
 };
