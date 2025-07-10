@@ -38,10 +38,10 @@ app.use(
 );
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: process.env.NODE_ENV === "production" ? 50 : 100,
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   limit: process.env.NODE_ENV === "production" ? 50 : 100,
+// });
 
 app.use(limiter);
 
