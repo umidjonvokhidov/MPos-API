@@ -21,7 +21,7 @@ export const authorize = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.id);
 
     if (!user) {
       const error = new Error("Invalid token. User not found.");
