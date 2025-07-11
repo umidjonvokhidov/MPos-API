@@ -32,7 +32,7 @@ export const SignUp = async (req, res, next) => {
       { session }
     );
 
-    const token = jwt.sign({ userId: newUsers._id }, JWT_SECRET, {
+    const token = jwt.sign({ id: newUsers._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
 
@@ -85,7 +85,7 @@ export const SignIn = async (req, res, next) => {
       throw error;
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
 
@@ -151,7 +151,7 @@ export const authorize = async (req, res, next) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.id);
 
     if (!user) return res.status(401).json({ message: "Unauthorized" });
 
@@ -247,7 +247,7 @@ export const OAuthCallback = (req, res) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: 'Authentication failed' });
   }
-  const token = jwt.sign({ userId: req.user._id }, JWT_SECRET, {
+  const token = jwt.sign({ id: req.user._id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
   const refreshToken = jwt.sign({ id: req.user._id }, REFRESH_SECRET, {
