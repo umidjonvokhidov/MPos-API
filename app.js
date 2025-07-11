@@ -43,7 +43,7 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 //   limit: process.env.NODE_ENV === "production" ? 50 : 100,
 // });
 
-app.use(limiter);
+// app.use(limiter);
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "your-session-secret",
