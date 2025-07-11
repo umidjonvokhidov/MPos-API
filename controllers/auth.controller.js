@@ -42,7 +42,7 @@ export const SignUp = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -95,7 +95,7 @@ export const SignIn = async (req, res, next) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -168,7 +168,7 @@ export const SignOut = (req, res, next) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
     sameSite: "Strict",
-    secure: true,
+    secure: false,
   });
   res.status(200).json({ success: true, message: "Logged out" });
 };
@@ -255,7 +255,7 @@ export const OAuthCallback = (req, res) => {
   });
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: 'Strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
