@@ -36,17 +36,6 @@ export const SignUp = async (req, res, next) => {
       expiresIn: JWT_EXPIRES_IN,
     });
 
-    const refreshToken = jwt.sign({ id: newUser._id }, REFRESH_SECRET, {
-      expiresIn: "7d",
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
     await session.commitTransaction();
     session.endSession();
 
@@ -67,7 +56,7 @@ export const SignUp = async (req, res, next) => {
 
 export const SignIn = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
 
@@ -89,16 +78,17 @@ export const SignIn = async (req, res, next) => {
       expiresIn: JWT_EXPIRES_IN,
     });
 
-    const refreshToken = jwt.sign({ id: user._id }, REFRESH_SECRET, {
-      expiresIn: "7d",
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    if (remember) {
+      const refreshToken = jwt.sign({ id: user._id }, REFRESH_SECRET, {
+        expiresIn: "7d",
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
 
     res.status(200).json({
       success: true,
