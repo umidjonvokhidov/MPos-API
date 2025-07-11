@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-http://localhost:5500/api/v1
+http://localhost:5000/api/v1
 ```
 
 ## Authentication
@@ -110,6 +110,12 @@ POST /auth/sign-out
   "success": true,
   "message": "Logged out"
 }
+```
+
+### 5. OAuth Login (Google/Apple)
+```http
+GET /auth/google
+GET /auth/apple
 ```
 
 ---
@@ -421,6 +427,31 @@ Authorization: Bearer <admin_token>
 
 ---
 
+## 💰 Stripe Payment Endpoints
+
+### 1. Create Payment Intent
+```http
+POST /stripe/create-payment-intent
+Authorization: Bearer <token>
+```
+
+**Request Body:**
+```json
+{
+  "amount": 1000,
+  "currency": "usd"
+}
+```
+
+**Response:**
+```json
+{
+  "clientSecret": "..."
+}
+```
+
+---
+
 ## 📁 File Upload
 
 ### Supported File Types
@@ -477,6 +508,24 @@ Authorization: Bearer <admin_token>
 
 ---
 
+## 🚦 Rate Limiting & Security
+
+- **Rate limiting:** 100 requests per 15 minutes per IP
+- **Security headers:** Provided by Helmet middleware
+- **CORS:** Enabled for cross-origin requests
+
+---
+
+## 🧪 Automated Testing
+
+- Run all major endpoint tests with:
+  ```bash
+  npm test
+  ```
+- See `test-api.js` for test script details.
+
+---
+
 ## 🚀 Getting Started
 
 1. **Install Dependencies:**
@@ -493,6 +542,11 @@ Authorization: Bearer <admin_token>
    JWT_SECRET=your_jwt_secret
    JWT_EXPIRES_IN=15m
    REFRESH_SECRET=your_refresh_secret
+   STRIPE_API_KEY=your_stripe_key
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+   APPLE_CLIENT_ID=your_apple_client_id
+   # ...other variables as needed
    ```
 
 3. **Start Development Server:**

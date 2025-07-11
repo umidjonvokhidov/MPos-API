@@ -6,6 +6,7 @@
 - ✅ **Created comprehensive auth middleware** (`middlewares/auth.middleware.js`)
 - ✅ **Role-based access control** implemented
 - ✅ **JWT token verification** with proper error handling
+- ✅ **OAuth login (Google, Apple) via Passport**
 - ✅ **Resource ownership validation** for user-specific data
 
 ### 🛡️ **Security Enhancements**
@@ -16,6 +17,9 @@
   - **Waiter**: Can manage transactions and view products
   - **Customer**: Can create transactions and view own data
 - ✅ **Resource ownership validation** prevents unauthorized access
+- ✅ **Rate limiting** (100 requests per 15 minutes)
+- ✅ **Helmet security headers**
+- ✅ **CORS enabled**
 
 ### 📋 **Route Protection Applied**
 
@@ -51,6 +55,13 @@
 - ✅ `POST /` - Admin only (create notification)
 - ✅ `DELETE /:id` - Admin only (delete notification)
 
+#### **Stripe Payment Routes** (`/api/v1/stripe`)
+- ✅ `POST /create-payment-intent` - Authenticated users (create payment intent)
+
+#### **OAuth Routes** (`/api/v1/auth`)
+- ✅ `GET /google` - Google OAuth login
+- ✅ `GET /apple` - Apple OAuth login
+
 ### 📚 **Documentation Created**
 - ✅ **Complete API Documentation** (`API_ENDPOINTS.md`)
   - All endpoints with request/response examples
@@ -58,13 +69,16 @@
   - Role-based permissions
   - Error handling examples
   - File upload specifications
+  - Stripe and OAuth endpoints
 
 ### 🧪 **Testing Infrastructure**
 - ✅ **API Test Script** (`test-api.js`)
   - Automated testing of all major endpoints
   - Authentication flow testing
   - CRUD operations testing
+  - Stripe payment and OAuth flow testing
 - ✅ **Test command** added to package.json
+  - Run with `npm test`
 
 ### 🔧 **Code Quality Improvements**
 - ✅ **Fixed missing imports** and await statements
@@ -82,12 +96,15 @@ http://localhost:5000/api/v1
 ### **Authentication Flow**
 1. **Register**: `POST /auth/sign-up`
 2. **Login**: `POST /auth/sign-in`
-3. **Use Token**: Include `Authorization: Bearer <token>` in headers
-4. **Refresh**: `POST /auth/refresh-token` when token expires
-5. **Logout**: `POST /auth/sign-out`
+3. **OAuth Login**: `GET /auth/google` or `GET /auth/apple`
+4. **Use Token**: Include `Authorization: Bearer <token>` in headers
+5. **Refresh**: `POST /auth/refresh-token` when token expires
+6. **Logout**: `POST /auth/sign-out`
 
 ### **Key Features for Frontend**
 - ✅ **JWT-based authentication** with refresh tokens
+- ✅ **OAuth login (Google, Apple)**
+- ✅ **Stripe payment integration**
 - ✅ **Role-based UI rendering** based on user permissions
 - ✅ **File upload support** for images
 - ✅ **Real-time notifications** system
@@ -95,7 +112,7 @@ http://localhost:5000/api/v1
 - ✅ **Rate limiting** (100 requests per 15 minutes)
 
 ### **Frontend Integration Checklist**
-- [ ] **Authentication screens** (login/register)
+- [ ] **Authentication screens** (login/register, OAuth)
 - [ ] **Role-based navigation** and UI components
 - [ ] **Product catalog** with image display
 - [ ] **Shopping cart** and transaction creation
@@ -103,18 +120,21 @@ http://localhost:5000/api/v1
 - [ ] **User profile** and settings management
 - [ ] **Notification system** integration
 - [ ] **File upload** components for images
+- [ ] **Stripe payment integration**
 
 ## 🎯 **Next Steps for Frontend Development**
 
 1. **Start with Authentication**
    - Implement login/register forms
    - Set up JWT token storage and management
+   - Add OAuth login buttons
    - Create protected route components
 
 2. **Build Core Features**
    - Product catalog display
    - Shopping cart functionality
    - Transaction creation and management
+   - Stripe payment integration
 
 3. **Add Staff Features**
    - Order management dashboard
@@ -151,6 +171,8 @@ Error responses:
 ## 🔒 **Security Features**
 
 - ✅ **JWT token authentication**
+- ✅ **OAuth login (Google, Apple)**
+- ✅ **Stripe payment integration**
 - ✅ **Role-based access control**
 - ✅ **Resource ownership validation**
 - ✅ **Rate limiting**
@@ -161,8 +183,18 @@ Error responses:
 
 ---
 
+## 🧪 **Automated Testing**
+
+- Run all major endpoint tests with:
+  ```bash
+  npm test
+  ```
+- See `test-api.js` for test script details.
+
+---
+
 ## 🎉 **Your Backend is Production-Ready!**
 
-The backend is now fully secured, documented, and ready for frontend integration. All endpoints are properly protected with role-based access control, and comprehensive documentation is available for frontend developers.
+The backend is now fully secured, documented, and ready for frontend integration. All endpoints are properly protected with role-based access control, Stripe payments, and OAuth login. Comprehensive documentation is available for frontend developers.
 
 **You can confidently proceed with frontend development!** 🚀 

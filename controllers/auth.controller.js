@@ -39,12 +39,14 @@ export const SignUp = async (req, res, next) => {
     await session.commitTransaction();
     session.endSession();
 
+    const { password: pw, ...userWithoutPassword } = newUser.toObject();
+
     res.status(201).json({
       success: true,
       message: "User created successfully",
       data: {
         token,
-        user: newUsers[0],
+        user: userWithoutPassword,
       },
     });
   } catch (error) {
@@ -114,7 +116,7 @@ export const refreshTokenRoute = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, REFRESH_SECRET);
     const accessToken = jwt.sign({ id: payload.id }, JWT_SECRET, {
-      expiresIn: "15m",
+      expiresIn: JWT_EXPIRES_IN,
     });
     res.status(200).json({ accessToken });
   } catch (error) {
@@ -189,7 +191,6 @@ export const verifyOTP = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "OTP is invalid or expired" });
     }
 
-    // ✅ Mark OTP as verified (optional flag)
     user.isOTPVerified = true;
     await user.save();
 
@@ -215,7 +216,7 @@ export const resetPassword = async (req, res, next) => {
     user.password = newPassword;
     user.resetOTP = undefined;
     user.resetOTPExpires = undefined;
-    user.isOTPVerified = false; // Clean up
+    user.isOTPVerified = false;
 
     await user.save();
 
