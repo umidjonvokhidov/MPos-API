@@ -21,7 +21,7 @@ export const SignUp = async (req, res, next) => {
       throw error;
     }
 
-    const newUsers = await User.create(
+    const newUser = await User.create(
       {
         firstname,
         lastname,
@@ -32,11 +32,11 @@ export const SignUp = async (req, res, next) => {
       { session }
     );
 
-    const token = jwt.sign({ id: newUsers._id }, JWT_SECRET, {
+    const token = jwt.sign({ id: newUser._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
 
-    const refreshToken = jwt.sign({ id: newUsers._id }, REFRESH_SECRET, {
+    const refreshToken = jwt.sign({ id: newUser._id }, REFRESH_SECRET, {
       expiresIn: "7d",
     });
 
