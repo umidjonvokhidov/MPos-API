@@ -103,6 +103,7 @@ const userSchema = new mongoose.Schema(
     },
     resetOTP: String,
     resetOTPExpires: String,
+    isOTPVerified: { type: Boolean, default: false }
   },
   {
     toJSON: {

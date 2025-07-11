@@ -7,6 +7,7 @@ import {
   refreshTokenRoute,
   resetPassword,
   OAuthCallback,
+  verifyOTP
 } from "../controllers/auth.controller.js";
 import passport from "../config/passport.js";
 
@@ -18,6 +19,7 @@ authRouter.post("/sign-out", SignOut);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/", resetPassword);
 authRouter.post("/refresh-token", refreshTokenRoute);
+authRouter.post("/verify-otp", verifyOTP);
 
 authRouter.get(
   "/google",

@@ -171,8 +171,10 @@ export const forgotPassword = async (req, res, next) => {
     next(error);
   }
 };
-export const resetPassword = async (req, res, next) => {
-  const { email, otp, newPassword } = req.body;
+
+
+export const verifyOTP = async (req, res, next) => {
+  const { email, otp } = req.body;
 
   const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
 
@@ -184,14 +186,37 @@ export const resetPassword = async (req, res, next) => {
     });
 
     if (!user) {
-      const error = new Error("OTP invalid or expired!");
-      error.statusCode = 404;
-      throw error;
+      return res.status(400).json({ success: false, message: "OTP is invalid or expired" });
+    }
+
+    // ✅ Mark OTP as verified (optional flag)
+    user.isOTPVerified = true;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user || !user.isOTPVerified) {
+      return res.status(400).json({ success: false, message: "OTP not verified" });
     }
 
     user.password = newPassword;
     user.resetOTP = undefined;
     user.resetOTPExpires = undefined;
+    user.isOTPVerified = false; // Clean up
+
     await user.save();
 
     res.status(200).json({
@@ -202,6 +227,8 @@ export const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+
 
 export const OAuthCallback = (req, res) => {
   if (!req.user) {
