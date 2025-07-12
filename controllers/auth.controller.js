@@ -196,7 +196,9 @@ export const verifyOTP = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(400).json({ success: false, message: "OTP is invalid or expired" });
+     const error = new Error("OTP is invalid or expired");
+      error.statusCode = 400;
+      throw error;
     }
 
     user.isOTPVerified = true;
