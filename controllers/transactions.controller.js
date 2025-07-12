@@ -8,9 +8,6 @@ export const getAllTransactions = async (req, res, next) => {
     const pipeline = [];
 
     if (req.query.id) {
-      pipeline.push({ $match: { _id: req.query.id } });
-    }
-    if (req.params.id) {
       pipeline.push({ $match: { userID: req.params.id } });
     }
     if (req.query.type_service) {

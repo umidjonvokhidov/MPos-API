@@ -4,12 +4,12 @@ export const getAllNotifications = async (req, res, next) => {
   try {
     let notifications;
 
-    if(req.params.id) {
-      notifications = await Notification.find({user: req.params.id});
+    if (req.query.id) {
+      notifications = await Notification.find({ user: req.query.id });
     } else {
       notifications = await Notification.find();
     }
-    
+
     if (!notifications) {
       const error = new Error("Notifications not found!");
       error.statusCode = 404;

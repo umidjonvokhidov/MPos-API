@@ -6,8 +6,8 @@ export const getAllProducts = async (req, res, next) => {
     
     let products;
 
-    if(req.params.id) {
-      products = await Product.find({createdBy: req.params.id});
+    if(req.query.id) {
+      products = await Product.find({createdBy: req.query.id});
     } else {
       products = await Product.find();
     }
