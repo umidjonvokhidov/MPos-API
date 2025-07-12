@@ -69,6 +69,13 @@ export const SignIn = async (req, res, next) => {
       throw error;
     }
 
+    if (!user.password && user.linkedAccounts && user.linkedAccounts.length > 0) {
+      const providers = user.linkedAccounts.map(acc => acc.provider).join(', ');
+      const error = new Error(`User registered via ${providers}. Please sign in with ${providers}.`);
+      error.statusCode = 403;
+      throw error;
+    }
+
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
