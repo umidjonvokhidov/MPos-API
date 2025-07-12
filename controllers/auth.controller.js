@@ -21,14 +21,15 @@ export const SignUp = async (req, res, next) => {
       throw error;
     }
 
-    const newUser = await User.create(
-      {
-        firstname,
-        lastname,
-        email,
-        password,
-      },
-
+   const [newUser] = await User.create(
+      [
+        {
+          firstname,
+          lastname,
+          email,
+          password,
+        },
+      ],
       { session }
     );
 
