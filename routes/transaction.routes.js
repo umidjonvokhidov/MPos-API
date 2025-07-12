@@ -14,7 +14,7 @@ const transactionsRouter = Router();
 transactionsRouter.use(authorize);
 
 // Waiter and above can view all transactions
-transactionsRouter.get("/", requireWaiter, getAllTransactions);
+transactionsRouter.get("/:id?", requireWaiter, getAllTransactions);
 
 // Users can create transactions (for customers)
 transactionsRouter.post("/", createTransaction);

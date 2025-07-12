@@ -12,7 +12,7 @@ import { authorize, requireChef } from "../middlewares/auth.middleware.js";
 export const productsRouter = Router();
 
 // Public routes (no auth required)
-productsRouter.get("/", getAllProducts);
+productsRouter.get("/:id?", getAllProducts);
 productsRouter.get("/:id", getProduct);
 
 // Protected routes (auth required)

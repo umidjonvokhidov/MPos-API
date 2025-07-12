@@ -3,7 +3,14 @@ import fs from "fs";
 
 export const getAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    
+    let products;
+
+    if(req.params.id) {
+      products = await Product.find({createdBy: req.params.id});
+    } else {
+      products = await Product.find();
+    }
 
     if (!products) {
       const error = new Error("Products not found!");

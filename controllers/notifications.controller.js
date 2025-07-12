@@ -2,8 +2,14 @@ import Notification from "../models/notification.model.js";
 
 export const getAllNotifications = async (req, res, next) => {
   try {
-    const notifications = await Notification.find();
+    let notifications;
 
+    if(req.params.id) {
+      notifications = await Notification.find({user: req.params.id});
+    } else {
+      notifications = await Notification.find();
+    }
+    
     if (!notifications) {
       const error = new Error("Notifications not found!");
       error.statusCode = 404;
@@ -35,22 +41,6 @@ export const getNotification = async (req, res, next) => {
   }
 
   res.json({ success: true, message: "Get Notification", id: req.params.id });
-};
-
-export const getNotificationByUser = async (req, res, next) => {
-  try {
-    const userNotifications = await Notification.find({ user: req.params.id });
-
-    if (!userNotifications) {
-      const error = new Error("Notifications not found for this User");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.status(200).json({ success: true, data: userNotifications });
-  } catch (error) {
-    next(error);
-  }
 };
 
 export const createNotification = async (req, res, next) => {
