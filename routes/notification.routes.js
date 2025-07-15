@@ -31,7 +31,7 @@ notificationsRouter.put(
   markNotificationRead
 );
 notificationsRouter.post(
-  "/markAllasRead/:id",
+  "/mark-all-as-read/:id",
   authorizeOwnResource("id"),
   markAllNotificationsRead
 );
