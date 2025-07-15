@@ -56,11 +56,11 @@ export const createNotification = async (req, res, next) => {
   }
 };
 
-export const updateNotification = async (req, res, next) => {
+export const markNotificationRead = async (req, res, next) => {
   try {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { $set: { status: "read" } },
       { new: true, runValidators: true }
     );
 

@@ -3,11 +3,15 @@ import {
   getAllNotifications,
   getNotification,
   createNotification,
-  updateNotification,
   deleteNotification,
   markAllNotificationsRead,
+  markNotificationRead,
 } from "../controllers/notifications.controller.js";
-import { authorize, requireAdmin, authorizeOwnResource } from "../middlewares/auth.middleware.js";
+import {
+  authorize,
+  requireAdmin,
+  authorizeOwnResource,
+} from "../middlewares/auth.middleware.js";
 
 const notificationsRouter = Router();
 
@@ -21,7 +25,15 @@ notificationsRouter.delete("/:id", requireAdmin, deleteNotification);
 
 // Users can access their own notifications
 notificationsRouter.get("/:id", authorizeOwnResource("user"), getNotification);
-notificationsRouter.put("/:id", authorizeOwnResource("user"), updateNotification);
-notificationsRouter.post("/markAllasRead/:id", authorizeOwnResource("id"), markAllNotificationsRead);
+notificationsRouter.put(
+  "/:id",
+  authorizeOwnResource("user"),
+  markNotificationRead
+);
+notificationsRouter.post(
+  "/markAllasRead/:id",
+  authorizeOwnResource("id"),
+  markAllNotificationsRead
+);
 
 export default notificationsRouter;
