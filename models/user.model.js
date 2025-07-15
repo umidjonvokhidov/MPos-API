@@ -103,7 +103,7 @@ const userSchema = new mongoose.Schema(
     },
     resetOTP: String,
     resetOTPExpires: String,
-    isOTPVerified: { type: Boolean, default: false }
+    isOTPVerified: { type: Boolean, default: false },
   },
   {
     toJSON: {
@@ -116,6 +116,10 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.virtual("fullname").get(function () {
+  return `${this.firstname} ${this.lastname}`;
+});
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -136,7 +140,10 @@ userSchema.pre("save", async function (next) {
 
 userSchema.pre("validate", function (next) {
   // Only require password if no OAuth providers are linked
-  if (!this.password && (!this.linkedAccounts || this.linkedAccounts.length === 0)) {
+  if (
+    !this.password &&
+    (!this.linkedAccounts || this.linkedAccounts.length === 0)
+  ) {
     this.invalidate("password", "Password is required");
   }
   next();

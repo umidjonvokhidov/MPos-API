@@ -18,11 +18,6 @@ const transactionSchema = new mongoose.Schema(
       enum: ["Delivery", "Take Away", "Dine In"],
       default: "Dine In",
     },
-    totalPrice: {
-      type: Number,
-      required: [true, "Total price is required"],
-      min: [0, "Total price must be greater than 0"],
-    },
     status: {
       type: String,
       enum: ["pending", "completed", "declined"],
@@ -73,6 +68,13 @@ const transactionSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+transactionSchema.virtual("totalPrice").get(function () {
+  if (!this.products || this.products.length === 0) return 0;
+  return this.products.reduce((sum, item) => {
+    return sum + item.price * item.count;
+  }, 0);
+});
 
 transactionSchema.pre("save", async function (next) {
   if (this.isModified("status")) {

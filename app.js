@@ -11,6 +11,7 @@ import usersRouter from "./routes/user.routes.js";
 import productsRouter from "./routes/product.routes.js";
 import transactionsRouter from "./routes/transaction.routes.js";
 import notificationsRouter from "./routes/notification.routes.js";
+import cartRouter from "./routes/cart.routes.js";
 import connectDB from "./config/mongodb.js";
 import session from "express-session";
 import passport from "./config/passport.js";
@@ -20,10 +21,12 @@ connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(
   helmet({
     contentSecurityPolicy:
@@ -45,12 +48,14 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 // app.use(limiter);
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || "your-session-secret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: true }, // Set to true if using HTTPS
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-session-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true },
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -59,41 +64,44 @@ app.use("/api/v1/users/", usersRouter);
 app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/transactions", transactionsRouter);
 app.use("/api/v1/notifications", notificationsRouter);
+app.use("/api/v1/cart", cartRouter);
 
 app.get("/api/v1/", (req, res) => {
   res.json({
     api: "MPos Restaurant Management System",
     version: "1.0.0",
-    description: "A comprehensive API for restaurant management including authentication, user management, products, transactions, and notifications.",
-    baseUrl: `${req.protocol}://${req.get('host')}/api/v1`,
+    description:
+      "A comprehensive API for restaurant management including authentication, user management, products, transactions, and notifications.",
+    baseUrl: `${req.protocol}://${req.get("host")}/api/v1`,
     endpoints: {
       authentication: {
         base: "/auth/",
         description: "User authentication and authorization",
-        methods: ["POST", "GET"]
+        methods: ["POST", "GET"],
       },
       users: {
         base: "/users/",
         description: "User profile and management",
-        methods: ["GET", "POST", "PUT", "DELETE"]
+        methods: ["GET", "POST", "PUT", "DELETE"],
       },
       products: {
         base: "/products",
         description: "Product catalog and inventory",
-        methods: ["GET", "POST", "PUT", "DELETE"]
+        methods: ["GET", "POST", "PUT", "DELETE"],
       },
       transactions: {
         base: "/transactions",
         description: "Payment and order processing",
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
       },
       notifications: {
         base: "/notifications",
         description: "System notifications and alerts",
-        methods: ["GET", "POST", "PUT", "DELETE"]
-      }
+        methods: ["GET", "POST", "PUT", "DELETE"],
+      },
     },
-    contact: "For support, check the documentation or contact the development team."
+    contact:
+      "For support, check the documentation or contact the development team.",
   });
 });
 

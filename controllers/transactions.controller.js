@@ -1,5 +1,4 @@
 import Transaction from "../models/transaction.model.js";
-import mongoose from "mongoose";
 
 export const getAllTransactions = async (req, res, next) => {
   try {
