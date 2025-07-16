@@ -19,9 +19,9 @@ const notificationsRouter = Router();
 notificationsRouter.use(authorize);
 
 // Admin only routes
-notificationsRouter.get("/", requireAdmin, getAllNotifications);
-notificationsRouter.post("/", requireAdmin, createNotification);
-notificationsRouter.delete("/:id", requireAdmin, deleteNotification);
+notificationsRouter.get("/", getAllNotifications);
+notificationsRouter.post("/", createNotification);
+notificationsRouter.delete("/:id", deleteNotification);
 
 // Users can access their own notifications
 notificationsRouter.get("/:id", authorizeOwnResource("user"), getNotification);
