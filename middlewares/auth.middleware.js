@@ -68,30 +68,3 @@ export const authorizeRoles = (...roles) => {
 export const requireAdmin = authorizeRoles("admin");
 export const requireChef = authorizeRoles("chef", "admin");
 export const requireWaiter = authorizeRoles("waiter", "chef", "admin");
-
-// Middleware to check if user can access their own resource or is admin
-export const authorizeOwnResource = (resourceUserIdField = "userID") => {
-  return (req, res, next) => {
-    if (!req.user) {
-      const error = new Error("Access denied. User not authenticated.");
-      error.statusCode = 401;
-      return next(error);
-    }
-
-    // Admin can access any resource
-    if (req.user.role === "admin") {
-      return next();
-    }
-
-    // Check if user is accessing their own resource
-    const resourceUserId = req.params[resourceUserIdField] || req.body[resourceUserIdField];
-    
-    if (resourceUserId && resourceUserId.toString() !== req.user._id.toString()) {
-      const error = new Error("Access denied. You can only access your own resources.");
-      error.statusCode = 403;
-      return next(error);
-    }
-
-    next();
-  };
-}; 

@@ -6,7 +6,7 @@ import {
   updateTransaction,
   deleteTransaction,
 } from "../controllers/transactions.controller.js";
-import { authorize, requireWaiter, authorizeOwnResource } from "../middlewares/auth.middleware.js";
+import { authorize, requireWaiter } from "../middlewares/auth.middleware.js";
 
 const transactionsRouter = Router();
 
@@ -20,7 +20,7 @@ transactionsRouter.get("/", requireWaiter, getAllTransactions);
 transactionsRouter.post("/", createTransaction);
 
 // Users can view their own transactions or waiters can view any
-transactionsRouter.get("/:id", authorizeOwnResource("userID"), getTransaction);
+transactionsRouter.get("/:id", getTransaction);
 
 // Waiter and above can update transactions
 transactionsRouter.put("/:id", requireWaiter, updateTransaction);
