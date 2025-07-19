@@ -22,6 +22,6 @@ notificationsRouter.delete("/:id", deleteNotification);
 // Users can access their own notifications
 notificationsRouter.get("/:id", getNotification);
 notificationsRouter.put("/:id", markNotificationRead);
-notificationsRouter.post("/mark-all-as-read/:id", markAllNotificationsRead);
+notificationsRouter.put("/mark-all-as-read/:id", markAllNotificationsRead);
 
 export default notificationsRouter;
