@@ -265,5 +265,5 @@ export const OAuthCallback = (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect(`${req.headers.origin}?token=${token}`);
+  res.redirect(`https://mpos-restaurant.vercel.app?token=${token}`);
 };
