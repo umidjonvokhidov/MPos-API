@@ -1,11 +1,6 @@
 import Stripe from "stripe";
-import { STRIPE_API_KEY } from "./env";
+import { STRIPE_API_KEY } from "./env.js";
 
-const stripe = Stripe(STRIPE_API_KEY);
+const stripe = new Stripe(STRIPE_API_KEY);
 
-const createStripePayout = async () => {
-  const payout = await stripe.payout.create({
-    amount: 5000,
-    currency: "usd",
-  });
-};
+export default stripe;

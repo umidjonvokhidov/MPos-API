@@ -44,7 +44,7 @@ const transactionSchema = new mongoose.Schema(
     ],
     paymentMethod: {
       type: String,
-      enum: ["Credit Card", "PayPal", "Cash", "Apple Pay", "Google Pay"],
+      enum: ["Credit Card", "Cash", "Google Pay"],
       required: [true, "Payment method is required"],
     },
     paymentStatus: {

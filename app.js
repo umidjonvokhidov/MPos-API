@@ -15,6 +15,7 @@ import cartRouter from "./routes/cart.routes.js";
 import connectDB from "./config/mongodb.js";
 import session from "express-session";
 import passport from "./config/passport.js";
+import stripeRouter from "./routes/stripe.routes.js";
 
 const app = express();
 connectDB();
@@ -65,6 +66,7 @@ app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/transactions", transactionsRouter);
 app.use("/api/v1/notifications", notificationsRouter);
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/stripe", stripeRouter);
 
 app.get("/api/v1/", (req, res) => {
   res.json({

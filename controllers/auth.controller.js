@@ -21,7 +21,7 @@ export const SignUp = async (req, res, next) => {
       throw error;
     }
 
-   const [newUser] = await User.create(
+    const [newUser] = await User.create(
       [
         {
           firstname,
@@ -69,9 +69,17 @@ export const SignIn = async (req, res, next) => {
       throw error;
     }
 
-    if (!user.password && user.linkedAccounts && user.linkedAccounts.length > 0) {
-      const providers = user.linkedAccounts.map(acc => acc.provider).join(', ');
-      const error = new Error(`User registered via ${providers}. Please sign in with ${providers}.`);
+    if (
+      !user.password &&
+      user.linkedAccounts &&
+      user.linkedAccounts.length > 0
+    ) {
+      const providers = user.linkedAccounts
+        .map((acc) => acc.provider)
+        .join(", ");
+      const error = new Error(
+        `User registered via ${providers}. Please sign in with ${providers}.`
+      );
       error.statusCode = 403;
       throw error;
     }
@@ -132,8 +140,6 @@ export const refreshTokenRoute = async (req, res, next) => {
   }
 };
 
-
-
 export const SignOut = (req, res, next) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
@@ -182,7 +188,6 @@ export const forgotPassword = async (req, res, next) => {
   }
 };
 
-
 export const verifyOTP = async (req, res, next) => {
   const { email, otp } = req.body;
 
@@ -196,7 +201,7 @@ export const verifyOTP = async (req, res, next) => {
     });
 
     if (!user) {
-     const error = new Error("OTP is invalid or expired");
+      const error = new Error("OTP is invalid or expired");
       error.statusCode = 400;
       throw error;
     }
@@ -220,7 +225,9 @@ export const resetPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user || !user.isOTPVerified) {
-      return res.status(400).json({ success: false, message: "OTP not verified" });
+      return res
+        .status(400)
+        .json({ success: false, message: "OTP not verified" });
     }
 
     user.password = newPassword;
@@ -239,24 +246,24 @@ export const resetPassword = async (req, res, next) => {
   }
 };
 
-
-
 export const OAuthCallback = (req, res) => {
   if (!req.user) {
-    return res.status(401).json({ success: false, message: 'Authentication failed' });
+    return res
+      .status(401)
+      .json({ success: false, message: "Authentication failed" });
   }
   const token = jwt.sign({ id: req.user._id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
   const refreshToken = jwt.sign({ id: req.user._id }, REFRESH_SECRET, {
-    expiresIn: '7d',
+    expiresIn: "7d",
   });
-  res.cookie('refreshToken', refreshToken, {
+  res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: true,
     sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-  
-  res.redirect(`http://localhost:3000?token=${token}`);
+
+  res.redirect(`${req.headers.origin}?token=${token}`);
 };

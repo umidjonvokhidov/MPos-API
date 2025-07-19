@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import { JWT_SECRET } from "../config/env.js";
 
-// Middleware to verify JWT token and attach user to request
 export const authorize = async (req, res, next) => {
   try {
     let token;
@@ -43,7 +42,6 @@ export const authorize = async (req, res, next) => {
   }
 };
 
-// Role-based authorization middleware
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -64,7 +62,6 @@ export const authorizeRoles = (...roles) => {
   };
 };
 
-// Specific role middlewares for convenience
 export const requireAdmin = authorizeRoles("admin");
 export const requireChef = authorizeRoles("chef", "admin");
 export const requireWaiter = authorizeRoles("waiter", "chef", "admin");
