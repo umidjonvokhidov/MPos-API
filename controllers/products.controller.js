@@ -47,6 +47,12 @@ export const createProduct = async (req, res, next) => {
   try {
     if (req.file && req.file.path) {
       req.body.image = req.file.path;
+    } else {
+      res.status(400).json({
+        success: true,
+        message: "Image Path not defined!",
+        data: product,
+      });
     }
     const product = await Product.create(req.body);
 
