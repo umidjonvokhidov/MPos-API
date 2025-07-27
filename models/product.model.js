@@ -9,12 +9,6 @@ const productSchema = new mongoose.Schema(
       trim: true,
       maxlength: [100, "Product name must be less than 100 characters"],
     },
-    description: {
-      type: String,
-      required: [true, "Product description is required"],
-      trim: true,
-      maxlength: [500, "Product description must be less than 500 characters"],
-    },
     price: {
       type: Number,
       required: [true, "Product price is required"],
@@ -29,15 +23,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, "Product image is required"],
     },
-    ingredients: {
-      type: [String],
-      required: [true, "Product ingredients are required"],
-    },
     stock: {
-      type: Number,
+      type: Boolean,
       required: [true, "Product stock is required"],
-      min: [0, "Product stock must be greater than 0"],
-      default: 0,
+      default: false,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
