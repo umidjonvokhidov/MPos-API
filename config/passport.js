@@ -19,28 +19,34 @@ passport.use(
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: GOOGLE_CALLBACK_URL,
-      scope: ['profile', 'email'],
+      scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const googleId = profile.id;
         const email = profile.emails[0].value;
-        const name = profile.displayName || '';
-        const picture = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
+        const name = profile.displayName || "";
+        const picture =
+          profile.photos?.[0]?.value ||
+          profile._json?.picture ||
+          profile._json?.image?.url;
         let user = await User.findOne({
           $or: [
             { email },
-            { 'linkedAccounts.provider': 'google', 'linkedAccounts.providerId': googleId },
+            {
+              "linkedAccounts.provider": "google",
+              "linkedAccounts.providerId": googleId,
+            },
           ],
         });
         if (!user) {
           user = await User.create({
-            firstname: profile.name?.givenName || '',
-            lastname: profile.name?.familyName || '',
+            firstname: profile.name?.givenName || "",
+            lastname: profile.name?.familyName || "",
             email,
             linkedAccounts: [
               {
-                provider: 'google',
+                provider: "google",
                 providerId: googleId,
                 email,
                 name,
@@ -49,10 +55,12 @@ passport.use(
             ],
           });
         } else {
-          const existingProvider = user.linkedAccounts.find(p => p.provider === 'google');
+          const existingProvider = user.linkedAccounts.find(
+            (p) => p.provider === "google"
+          );
           if (!existingProvider) {
             user.linkedAccounts.push({
-              provider: 'google',
+              provider: "google",
               providerId: googleId,
               email,
               name,
@@ -151,4 +159,4 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-export default passport; 
+export default passport;

@@ -68,16 +68,20 @@ export const createUser = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
   if (req.file && req.file.path) {
-    req.body.profilePicture = req.file.path;
-    const OldUser = await User.findById(req.params.id);
-    if (OldUser.profilePicture) {
-      const filePath = OldUser.profilePicture;
+    req.body.profilePicture = `${req.protocol}://${req.get("host")}/uploads/users/${req.file.filename}`;
+
+    const oldUser = await User.findById(req.params.id);
+    if (oldUser && oldUser.profilePicture) {
+      const imageUrl = new URL(oldUser.profilePicture);
+      const filename = path.basename(imageUrl.pathname);
+
+      const filePath = path.join(__dirname, "..", "uploads", "users", filename);
+
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
     }
   }
-
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,

@@ -16,6 +16,9 @@ import connectDB from "./config/mongodb.js";
 import session from "express-session";
 import passport from "./config/passport.js";
 import stripeRouter from "./routes/stripe.routes.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import path from "path";
 
 const app = express();
 connectDB();
@@ -24,10 +27,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-     origin: [
-      "http://localhost:3000",
-      "https://mpos-restaurant.vercel.app"
-    ],
+    origin: ["http://localhost:3000", "https://mpos-restaurant.vercel.app"],
     credentials: true,
   })
 );
@@ -44,6 +44,11 @@ app.use(
   })
 );
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // const limiter = rateLimit({
 //   windowMs: 15 * 60 * 1000,

@@ -3,13 +3,16 @@ import fs from "fs";
 
 export const getAllProducts = async (req, res, next) => {
   try {
-    
     let products;
 
-    if(req.query.id) {
-      products = await Product.find({createdBy: req.query.id});
+    if (req.query.id) {
+      products = (await Product.find({ createdBy: req.query.id })).sort({
+        createdAt: -1,
+      });
     } else {
-      products = await Product.find();
+      products = await Product.find().sort({
+        createdAt: -1,
+      });
     }
 
     if (!products) {
@@ -46,8 +49,12 @@ export const getProduct = async (req, res, next) => {
 export const createProduct = async (req, res, next) => {
   try {
     if (req.file && req.file.path) {
-      req.body.image = req.file.path;
+      req.body.image = `${req.protocol}://${req.get("host")}/uploads/products/${req.file.filename}`;
     }
+    if (req.user && req.user._id) {
+      req.body.createdBy = req.user._id;
+    }
+
     const product = await Product.create(req.body);
 
     res.status(201).json({
@@ -63,10 +70,21 @@ export const createProduct = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
   try {
     if (req.file && req.file.path) {
-      req.body.image = req.file.path;
-      const OldProduct = await Product.findById(req.params.id);
-      if (OldProduct.image) {
-        const filePath = OldProduct.image;
+      req.body.image = `${req.protocol}://${req.get("host")}/uploads/products/${req.file.filename}`;
+
+      const oldProduct = await Product.findById(req.params.id);
+      if (oldProduct && oldProduct.image) {
+        const imageUrl = new URL(oldProduct.image);
+        const filename = path.basename(imageUrl.pathname);
+
+        const filePath = path.join(
+          __dirname,
+          "..",
+          "uploads",
+          "products",
+          filename
+        );
+
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
@@ -98,8 +116,24 @@ export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
 
+    if (!product) {
+      const error = new Error("Product with this ID not found!");
+      error.statusCode = 404;
+      throw error;
+    }
+
     if (product.image) {
-      const filePath = product.image;
+      const imageUrl = new URL(product.image);
+      const filename = path.basename(imageUrl.pathname);
+
+      const filePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "products",
+        filename
+      );
+
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
