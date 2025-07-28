@@ -54,6 +54,7 @@ export const createProduct = async (req, res, next) => {
     if (req.user && req.user._id) {
       req.body.createdBy = req.user._id;
     }
+    console.log(req.body);
 
     const product = await Product.create(req.body);
 
