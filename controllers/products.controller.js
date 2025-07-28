@@ -1,6 +1,8 @@
 import Product from "../models/product.model.js";
 import fs from "fs";
 import path from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 export const getAllProducts = async (req, res, next) => {
   try {
@@ -70,6 +72,8 @@ export const createProduct = async (req, res, next) => {
 };
 
 export const updateProduct = async (req, res, next) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   try {
     if (req.file && req.file.path) {
       req.body.image = `${req.protocol}://${req.get("host")}/uploads/products/${req.file.filename}`;

@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import fs from "fs";
 import path from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -68,6 +70,8 @@ export const createUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   if (req.file && req.file.path) {
     req.body.profilePicture = `${req.protocol}://${req.get("host")}/uploads/users/${req.file.filename}`;
 
