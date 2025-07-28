@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import fs from "fs";
+import path from "path";
 
 export const getAllUsers = async (req, res, next) => {
   try {
