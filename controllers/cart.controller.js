@@ -24,7 +24,7 @@ export const getUserCartProducts = async (req, res, next) => {
 export const addToUserCart = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { productId } = req.body;
+    const productId = req.params.id;
     const userCart = await Cart.find({
       user: userId,
       products: { $elemMatch: { productId: productId } },
@@ -62,7 +62,7 @@ export const addToUserCart = async (req, res, next) => {
 export const removeFromUserCart = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { productId } = req.body;
+    const productId = req.params.id;
 
     const cart = await Cart.findOne({
       user: userId,
@@ -138,7 +138,7 @@ export const clearUserCart = async (req, res, next) => {
 export const removeProductCompletelyFromCart = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { productId } = req.body;
+    const productId = req.params.id;
 
     const cart = await Cart.findOne({ user: userId });
     if (!cart) {
