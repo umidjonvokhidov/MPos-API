@@ -7,7 +7,7 @@ import {
   getUserSettings,
   updateUser,
   updateUserSettings,
-  getCurrentUser
+  getCurrentUser,
 } from "../controllers/users.controller.js";
 import { uploadUserProfilePhoto } from "../utils/multer.js";
 import { authorize, requireAdmin } from "../middlewares/auth.middleware.js";
@@ -20,9 +20,8 @@ usersRouter.post(
   createUser
 );
 
-
-usersRouter.use(authorize); 
-usersRouter.get("/me",getCurrentUser); 
+usersRouter.use(authorize);
+usersRouter.get("/me", getCurrentUser);
 usersRouter.get("/", requireAdmin, getAllUsers);
 usersRouter.delete("/:id", requireAdmin, deleteUser);
 usersRouter.get("/:id", getUser);

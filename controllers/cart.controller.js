@@ -2,7 +2,7 @@ import Cart from "../models/cart.model.js";
 
 export const getUserCartProducts = async (req, res, next) => {
   try {
-    const userCart = await Cart.find({ user: req.params.id }).populate(
+    const userCart = await Cart.find({ user: req.user._id }).populate(
       "products.productId"
     );
 
@@ -23,7 +23,7 @@ export const getUserCartProducts = async (req, res, next) => {
 
 export const addToUserCart = async (req, res, next) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id;
     const { productId } = req.body;
     const userCart = await Cart.find({
       user: userId,
@@ -41,7 +41,7 @@ export const addToUserCart = async (req, res, next) => {
     } else {
       await Cart.updateOne(
         {
-          user: req.params.id,
+          user: userId,
           "products.productId": { $ne: productId },
         },
         {
@@ -61,7 +61,7 @@ export const addToUserCart = async (req, res, next) => {
 
 export const removeFromUserCart = async (req, res, next) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id;
     const { productId } = req.body;
 
     const cart = await Cart.findOne({
@@ -113,7 +113,7 @@ export const removeFromUserCart = async (req, res, next) => {
 
 export const clearUserCart = async (req, res, next) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id;
     const cart = await Cart.findOne({ user: userId });
 
     if (!cart) {
@@ -137,7 +137,7 @@ export const clearUserCart = async (req, res, next) => {
 
 export const removeProductCompletelyFromCart = async (req, res, next) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id;
     const { productId } = req.body;
 
     const cart = await Cart.findOne({ user: userId });

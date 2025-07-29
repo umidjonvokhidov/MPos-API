@@ -6,17 +6,20 @@ import {
   clearUserCart,
   removeProductCompletelyFromCart,
 } from "../controllers/cart.controller.js";
+import { authorize } from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const cartRouter = express.Router();
 
-router.get("/:id", getUserCartProducts);
+cartRouter.use(authorize);
 
-router.post("/:id/add", addToUserCart);
+cartRouter.get("/", getUserCartProducts);
 
-router.post("/:id/remove", removeFromUserCart);
+cartRouter.post("/add", addToUserCart);
 
-router.post("/:id/clear", clearUserCart);
+cartRouter.post("/remove", removeFromUserCart);
 
-router.post("/:id/remove-complete", removeProductCompletelyFromCart);
+cartRouter.post("/clear", clearUserCart);
 
-export default router;
+cartRouter.post("/remove-complete", removeProductCompletelyFromCart);
+
+export default cartRouter;
