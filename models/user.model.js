@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Notification from "./notification.model.js";
 import bcrypt from "bcryptjs";
+import Cart from "./cart.model.js";
 
 export const providerSchema = new mongoose.Schema(
   {
@@ -126,7 +127,14 @@ userSchema.pre("save", async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
+  next();
+});
+
+userSchema.post("save", async function () {
   if (this.isNew) {
+    await Cart.create({
+      user: this._id,
+    });
     await Notification.create({
       user: this._id,
       title: "Welcome!",
@@ -134,12 +142,16 @@ userSchema.pre("save", async function (next) {
       type: "system",
     });
   }
+});
 
-  next();
+userSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await Cart.deleteOne({ user: doc._id });
+    await Notification.deleteMany({ user: doc._id });
+  }
 });
 
 userSchema.pre("validate", function (next) {
-  // Only require password if no OAuth providers are linked
   if (
     !this.password &&
     (!this.linkedAccounts || this.linkedAccounts.length === 0)
