@@ -133,17 +133,20 @@ userSchema.pre("save", async function (next) {
 
 userSchema.post("save", async function () {
   if (this.isNew) {
-    await Cart.create({
-      user: this._id,
-    });
-    await Notification.create({
-      user: this._id,
-      title: "Welcome!",
-      message: "Your account has been created.",
-      type: "system",
-    });
+    try {
+      await Cart.create({ user: this._id });
+      await Notification.create({
+        user: this._id,
+        title: "Welcome!",
+        message: "Your account has been created.",
+        type: "system",
+      });
+    } catch (err) {
+      console.error("❌ Error in post-save hook:", err);
+    }
   }
 });
+
 
 userSchema.post("findOneAndDelete", async function (doc) {
   if (doc) {
