@@ -83,9 +83,9 @@ export const Webhook = async (req, res, next) => {
             fullname: session.metadata.fullname,
             typeService: session.metadata.typeService,
             products: cart.products.map((p) => ({
-              productId: p._id,
+              productId: p.productId._id,
               count: p.count,
-              price: p.price,
+              price: p.productId.price,
             })),
             tableNumber: session.metadata.tableNumber,
             description: session.metadata.description,
