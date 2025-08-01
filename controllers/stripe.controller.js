@@ -26,7 +26,7 @@ export const createStripeCheckoutSession = async (req, res, next) => {
             name: item.productId.name,
             images: [item.productId.image],
           },
-          unit_amount: item.productId.price * 100,
+          unit_amount: Math.round(item.productId.price * 100),
         },
         quantity: item.count,
       })),
