@@ -24,9 +24,9 @@ export const createStripeCheckoutSession = async (req, res, next) => {
           currency: "usd",
           product_data: {
             name: item.productId.name,
+            images: [item.productId.image],
           },
           unit_amount: item.productId.price * 100,
-          images: [item.productId.image],
         },
         quantity: item.count,
       })),
