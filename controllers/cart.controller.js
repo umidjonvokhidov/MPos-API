@@ -2,7 +2,7 @@ import Cart from "../models/cart.model.js";
 
 export const getUserCartProducts = async (req, res, next) => {
   try {
-    const userCart = await Cart.find({ user: req.user._id }).populate(
+    const userCart = await Cart.findOne({ user: req.user._id }).populate(
       "products.productId"
     );
 
@@ -25,35 +25,36 @@ export const addToUserCart = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const { productId } = req.body;
-    const userCart = await Cart.find({
-      user: userId,
-      products: { $elemMatch: { productId: productId } },
-    });
 
-    if (userCart) {
-      await Cart.updateOne(
-        {
-          user: userId,
-          "products.productId": productId,
-        },
-        { $inc: { "products.$.count": 1 } }
-      );
+    let cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+      cart = await Cart.create({
+        user: userId,
+        products: [{ productId, count: 1 }],
+      });
     } else {
-      await Cart.updateOne(
-        {
-          user: userId,
-          "products.productId": { $ne: productId },
-        },
-        {
-          $push: {
-            products: {
-              productId: new mongoose.Types.ObjectId(productId),
-              count: 1,
-            },
-          },
-        }
+      const existingProduct = cart.products.find(
+        (p) => p.productId.toString() === productId
       );
+
+      if (existingProduct) {
+        existingProduct.count += 1;
+      } else {
+        cart.products.push({
+          productId,
+          count: 1,
+        });
+      }
+
+      await cart.save();
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product added to cart successfully.",
+      cart,
+    });
   } catch (error) {
     next(error);
   }
@@ -93,7 +94,8 @@ export const removeFromUserCart = async (req, res, next) => {
           user: userId,
           "products.productId": productId,
         },
-        { $inc: { "products.$.count": -1 } }
+        { $inc: { "products.$.count": -1 } },
+        { runValidators: true, new: true }
       );
     } else {
       await Cart.updateOne(

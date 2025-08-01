@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Notification from "./notification.model.js";
 
 const transactionSchema = new mongoose.Schema(
   {
@@ -18,9 +17,9 @@ const transactionSchema = new mongoose.Schema(
       enum: ["Delivery", "Take Away", "Dine In"],
       default: "Dine In",
     },
-    tableNumber: {
+    tableNumber: {  
       type: Number,
-      required: [true, "Table Number is required"]
+      required: [true, "Table Number is required"],
     },
     status: {
       type: String,
@@ -61,6 +60,7 @@ const transactionSchema = new mongoose.Schema(
       receiptUrl: { type: String },
       gatewayResponse: mongoose.Schema.Types.Mixed,
     },
+    description: String,
   },
   {
     toJSON: {
@@ -80,31 +80,35 @@ transactionSchema.virtual("totalPrice").get(function () {
   }, 0);
 });
 
-transactionSchema.pre("save", async function (next) {
-  if (this.isModified("status")) {
-    const statusMessages = {
-      pending: "Your order is being processed",
-      completed: "Your order has been completed successfully!",
-      declined: "Your order has been declined",
-    };
+transactionSchema.pre("save", async function () {
+  try {
+    const Notification = (await import("./notification.model.js")).default;
 
-    const statusTitles = {
-      pending: "Order Processing",
-      completed: "Order Completed",
-      declined: "Order Declined",
-    };
+    if (this.isModified("status")) {
+      const statusMessages = {
+        pending: "Your order is being processed",
+        completed: "Your order has been completed successfully!",
+        declined: "Your order has been declined",
+      };
 
-    await Notification.create({
-      user: this.userID,
-      title: statusTitles[this.status] || "Order Status Update",
-      message:
-        statusMessages[this.status] ||
-        `Your order status has been updated to ${this.status}`,
-      type: "order_status",
-    });
+      const statusTitles = {
+        pending: "Order Processing",
+        completed: "Order Completed",
+        declined: "Order Declined",
+      };
+
+      await Notification.create({
+        user: this.userID,
+        title: statusTitles[this.status] || "Order Status Update",
+        message:
+          statusMessages[this.status] ||
+          `Your order status has been updated to ${this.status}`,
+        type: "order_status",
+      });
+    }
+  } catch (error) {
+    console.log("Error in post-save hook:", error);
   }
-
-  next();
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);

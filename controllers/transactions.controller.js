@@ -53,7 +53,8 @@ export const getTransaction = async (req, res, next) => {
 
 export const createTransaction = async (req, res, next) => {
   try {
-    const transaction = await Transaction.create(req.body);
+    const transaction = new Transaction(req.body);
+    await transaction.save();
 
     res.status(200).json({
       success: true,

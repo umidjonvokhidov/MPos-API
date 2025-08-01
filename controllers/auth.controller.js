@@ -21,17 +21,14 @@ export const SignUp = async (req, res, next) => {
       throw error;
     }
 
-    const [newUser] = await User.create(
-      [
-        {
-          firstname,
-          lastname,
-          email,
-          password,
-        },
-      ],
-      { session }
-    );
+    const newUser = new User({
+      firstname,
+      lastname,
+      email,
+      password,
+    });
+
+    await newUser.save({ session });
 
     const token = jwt.sign({ id: newUser._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,

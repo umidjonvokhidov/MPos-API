@@ -1,7 +1,8 @@
 import User from "../models/user.model.js";
 import fs from "fs";
 import path from "path";
-
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -54,7 +55,8 @@ export const createUser = async (req, res, next) => {
       req.body.profilePicture = req.file.path;
     }
 
-    const user = await User.create(req.body);
+    const user = new User(req.body);
+    await user.save();
 
     res.status(201).json({
       success: true,

@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
-import Notification from "./notification.model.js";
 import bcrypt from "bcryptjs";
-import Cart from "./cart.model.js";
 
 export const providerSchema = new mongoose.Schema(
   {
@@ -24,6 +22,8 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["waiter", "chef", "admin"],
+      default: "waiter",
+      required: true,
     },
     email: {
       type: String,
@@ -126,28 +126,45 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
-
+  this._wasNew = this.isNew;
   next();
 });
 
 userSchema.post("save", async function () {
-  if (this.isNew) {
-    await Cart.create({
-      user: this._id,
-    });
-    await Notification.create({
-      user: this._id,
-      title: "Welcome!",
-      message: "Your account has been created.",
-      type: "system",
-    });
+  console.log("run post-save hook for user model");
+  try {
+    const Cart = (await import("./cart.model.js")).default;
+    const Notification = (await import("./notification.model.js")).default;
+
+    console.log("Creating new user and cart if new user");
+
+    if (this._wasNew) {
+      if (this.role === "waiter") {
+        await Cart.create({ user: this._id });
+      }
+
+      await Notification.create({
+        user: this._id,
+        title: "Welcome!",
+        message: "Your account has been created.",
+        type: "system",
+      });
+    }
+  } catch (error) {
+    console.error("Error in post-save hook:", error);
   }
 });
 
 userSchema.post("findOneAndDelete", async function (doc) {
-  if (doc) {
-    await Cart.deleteOne({ user: doc._id });
-    await Notification.deleteMany({ user: doc._id });
+  try {
+    const Cart = (await import("./cart.model.js")).default;
+    const Notification = (await import("./notification.model.js")).default;
+    if (doc) {
+      await Cart.deleteOne({ user: doc._id });
+      await Notification.deleteMany({ user: doc._id });
+    }
+  } catch (error) {
+    console.log("Error in post-findOneAndDelete hook:", error);
   }
 });
 
@@ -162,12 +179,17 @@ userSchema.pre("validate", function (next) {
 });
 
 userSchema.post("findOneAndUpdate", async function (doc) {
-  if (doc) {
-    await Notification.create({
-      user: doc._id,
-      title: "Profile update",
-      message: "Profile data updated successfully",
-    });
+  try {
+    const Notification = (await import("./notification.model.js")).default;
+    if (doc) {
+      await Notification.create({
+        user: doc._id,
+        title: "Profile update",
+        message: "Profile data updated successfully",
+      });
+    }
+  } catch (error) {
+    console.log("Error in post-findOneAndUpdate hook:", error);
   }
 });
 

@@ -59,7 +59,8 @@ export const createProduct = async (req, res, next) => {
     }
     console.log(req.body);
 
-    const product = await Product.create(req.body);
+    const product = new Product(req.body);
+    await product.save();
 
     res.status(201).json({
       success: true,

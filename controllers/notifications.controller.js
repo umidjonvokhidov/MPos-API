@@ -45,7 +45,8 @@ export const getNotification = async (req, res, next) => {
 
 export const createNotification = async (req, res, next) => {
   try {
-    const notification = await Notification.create(req.body);
+    const notification = new Notification(req.body);
+    await notification.save();
 
     res.status(201).json({
       success: true,
@@ -102,7 +103,8 @@ export const markAllNotificationsRead = async (req, res, next) => {
   try {
     const notifications = await Notification.updateMany(
       { user: req.params.id, status: "unread" },
-      { $set: { status: "read" } }
+      { $set: { status: "read" } },
+      { runValidators: true, new: true }
     );
 
     if (!notifications) {

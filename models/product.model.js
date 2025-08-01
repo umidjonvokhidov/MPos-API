@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Notification from "./notification.model.js";
 
 const productSchema = new mongoose.Schema(
   {
@@ -45,16 +44,20 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-productSchema.pre("save", async function (next) {
-  if (this.isNew) {
-    await Notification.create({
-      user: this.createdBy,
-      title: "Product created!",
-      message: "Your product has been created!",
-      type: "system",
-    });
+productSchema.pre("save", async function () {
+  try {
+    const Notification = (await import("./notification.model.js")).default;
+    if (this.isNew) {
+      await Notification.create({
+        user: this.createdBy,
+        title: "Product created!",
+        message: "Your product has been created!",
+        type: "system",
+      });
+    }
+  } catch (error) {
+    console.log("Error in post-save hook:", error);
   }
-  next();
 });
 
 const Product = mongoose.model("Product", productSchema);
