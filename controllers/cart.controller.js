@@ -63,7 +63,7 @@ export const addToUserCart = async (req, res, next) => {
 export const removeFromUserCart = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { productId } = req.body;
+    const productId = req.params.id;
 
     const cart = await Cart.findOne({
       user: userId,
@@ -140,7 +140,7 @@ export const clearUserCart = async (req, res, next) => {
 export const removeProductCompletelyFromCart = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { productId } = req.body;
+    const productId = req.params.id;
 
     const cart = await Cart.findOne({ user: userId });
     if (!cart) {

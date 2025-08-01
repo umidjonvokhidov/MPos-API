@@ -14,12 +14,12 @@ cartRouter.use(authorize);
 
 cartRouter.get("/", getUserCartProducts);
 
-cartRouter.post("/add", addToUserCart);
+cartRouter.post("/:id/add", addToUserCart);
 
-cartRouter.post("/remove", removeFromUserCart);
+cartRouter.post("/:id/remove", removeFromUserCart);
 
 cartRouter.post("/clear", clearUserCart);
 
-cartRouter.post("/remove-complete", removeProductCompletelyFromCart);
+cartRouter.post("/:id/remove-complete", removeProductCompletelyFromCart);
 
 export default cartRouter;

@@ -155,6 +155,7 @@ userSchema.post("save", async function () {
   }
 });
 
+
 userSchema.post("findOneAndDelete", async function (doc) {
   try {
     const Cart = (await import("./cart.model.js")).default;
