@@ -26,6 +26,7 @@ export const createStripeCheckoutSession = async (req, res, next) => {
             name: item.productId.name,
           },
           unit_amount: item.productId.price * 100,
+          images: [item.productId.image],
         },
         quantity: item.count,
       })),
@@ -72,9 +73,9 @@ export const Webhook = async (req, res, next) => {
       const session = event.data.object;
 
       try {
-        const cart = await Cart.findById(session.metadata.userID);
+        const cart = await Cart.findOne({ user: session.metadata.userID });
 
-      if (cart.products) {
+        if (cart.products) {
           const transaction = new Transaction({
             userID: session.metadata.userID,
             fullname: session.metadata.fullname,
