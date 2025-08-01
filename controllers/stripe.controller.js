@@ -74,7 +74,7 @@ export const Webhook = async (req, res, next) => {
       try {
         const cart = await Cart.findById(session.metadata.userID);
 
-        if (cart.products) {
+      if (cart.products) {
           const transaction = new Transaction({
             userID: session.metadata.userID,
             fullname: session.metadata.fullname,

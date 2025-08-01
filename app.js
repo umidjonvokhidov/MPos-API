@@ -24,7 +24,7 @@ import { Webhook } from "./controllers/stripe.controller.js";
 const app = express();
 connectDB();
 
-app.post("/stripe/webhook", express.raw({ type: "application/json" }), Webhook);
+app.post("/api/v1/stripe/webhook", express.raw({ type: "application/json" }), Webhook);
 
 app.use(express.json());
 app.use(cookieParser());
