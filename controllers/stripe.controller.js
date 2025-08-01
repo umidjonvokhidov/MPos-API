@@ -25,6 +25,7 @@ export const createStripeCheckoutSession = async (req, res, next) => {
           currency: "usd",
           product_data: {
             name: item.productId.name,
+            images: [item.productId.image],
           },
           unit_amount: Math.round(item.productId.price * 100),
         },
@@ -52,13 +53,12 @@ export const createStripeCheckoutSession = async (req, res, next) => {
     console.log(error);
   }
 };
-
 export const Webhook = async (req, res, next) => {
-  try {
-    console.log("webhook");
+  let event;
 
+  try {
     const sig = req.headers["stripe-signature"];
-    let event;
+
     try {
       event = stripe.webhooks.constructEvent(
         req.body,
@@ -66,18 +66,28 @@ export const Webhook = async (req, res, next) => {
         STRIPE_WEBHOOK_SECRET
       );
     } catch (error) {
-      next(error);
+      console.error("❌ Invalid webhook signature.");
+      return res.status(400).send(`Webhook Error: ${error.message}`);
     }
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
       try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          session.payment_intent
+        );
+
+        if (paymentIntent.status !== "succeeded") {
+          console.warn("⚠️ Payment not succeeded yet. Skipping.");
+          return res.status(200).send("Payment not completed");
+        }
+
         const cart = await Cart.findOne({
           user: session.metadata.userID,
         }).populate("products.productId");
 
-        if (cart.products) {
+        if (cart?.products?.length > 0) {
           const transaction = new Transaction({
             userID: session.metadata.userID,
             fullname: session.metadata.fullname,
@@ -93,33 +103,32 @@ export const Webhook = async (req, res, next) => {
             paymentStatus: "completed",
             paymentDetails: {
               PaymentId: session.payment_intent,
-              receiptUrl: session.receiptUrl,
+              receiptUrl:
+                paymentIntent?.charges?.data?.[0]?.receipt_url || null,
               gatewayResponse: session,
             },
           });
 
           await transaction.save();
 
-          if (transaction) {
-            console.log("transaction created successfully!");
+          cart.products = [];
+          await cart.save();
 
-            if (cart) {
-              cart.products = [];
-              await cart.save();
-            }
-          }
-
-          res.status(200).json({
-            success: true,
-            message: "Created stripe session successfully!",
-            data: transaction,
-          });
+          console.log("✅ Transaction saved and cart cleared.");
+        } else {
+          console.warn("🛒 Cart is empty or not found.");
         }
+
+        return res.status(200).send("Checkout processed");
       } catch (error) {
-        next(error);
+        console.error("❌ Error in checkout handling:", error);
+        return res.status(500).send("Internal server error.");
       }
+    } else {
+      return res.status(200).send("Event ignored");
     }
   } catch (error) {
-    next(error);
+    console.error("❌ Webhook failed:", error);
+    return res.status(500).send("Webhook failure");
   }
 };
