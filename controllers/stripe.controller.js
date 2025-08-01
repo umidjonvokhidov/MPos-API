@@ -19,6 +19,7 @@ export const createStripeCheckoutSession = async (req, res, next) => {
         description: description,
         tableNumber: tableNumber,
       },
+
       line_items: products.map((item) => ({
         price_data: {
           currency: "usd",
@@ -72,7 +73,9 @@ export const Webhook = async (req, res, next) => {
       const session = event.data.object;
 
       try {
-        const cart = await Cart.findOne({ user: session.metadata.userID });
+        const cart = await Cart.findOne({
+          user: session.metadata.userID,
+        }).populate("products.productId");
 
         if (cart.products) {
           const transaction = new Transaction({
