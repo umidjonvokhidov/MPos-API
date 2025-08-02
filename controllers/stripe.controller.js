@@ -30,6 +30,7 @@ export const createStripeCheckoutSession = async (req, res, next) => {
           unit_amount: Math.round(item.productId.price * 100),
         },
         quantity: item.count,
+        tax_rates: ["txr_1RrdfOQxE7rXLziJNQw8YC8o"],
       })),
       payment_method_types: ["card"],
     });
