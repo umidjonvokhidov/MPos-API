@@ -17,7 +17,7 @@ const transactionSchema = new mongoose.Schema(
       enum: ["Delivery", "Take Away", "Dine In"],
       default: "Dine In",
     },
-    tableNumber: {  
+    tableNumber: {
       type: Number,
       required: [true, "Table Number is required"],
     },
@@ -52,7 +52,7 @@ const transactionSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["pending", "completed", "failed"],
+      enum: ["pending", "completed", "failed", "canceled"],
       default: "pending",
     },
     paymentDetails: {
