@@ -122,10 +122,12 @@ export const Webhook = async (req, res, next) => {
                   },
                 }
               );
+
               if (!transaction) {
                 console.error("❌ Transaction not found.");
                 return res.status(404).send("Transaction not found");
               }
+              break;
             }
             case "payment_failed": {
               const transaction = await Transaction.findByIdAndUpdate(
@@ -144,18 +146,20 @@ export const Webhook = async (req, res, next) => {
                 console.error("❌ Transaction not found.");
                 return res.status(404).send("Transaction not found");
               }
+              break;
             }
-            case "payment_failed": {
+            case "payment_canceled": {
               const transaction = await Transaction.findByIdAndUpdate(
                 session.metadata.transactionId,
                 {
-                  paymentStatus: "failed",
+                  paymentStatus: "canceled",
                 }
               );
               if (!transaction) {
                 console.error("❌ Transaction not found.");
                 return res.status(404).send("Transaction not found");
               }
+              break;
             }
           }
 
@@ -163,9 +167,12 @@ export const Webhook = async (req, res, next) => {
         } catch (error) {
           console.error("❌ Error in checkout handling:", error);
           return res.status(500).send("Internal server error.");
+        } finally {
+          break;
         }
       }
       case "checkout.session.expired": {
+        const session = event.data.object;
         const transaction = await Transaction.findByIdAndUpdate(
           session.metadata.transactionId,
           {
@@ -176,6 +183,7 @@ export const Webhook = async (req, res, next) => {
           console.error("❌ Transaction not found.");
           return res.status(404).send("Transaction not found");
         }
+        break;
       }
     }
   } catch (error) {
