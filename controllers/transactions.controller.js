@@ -5,7 +5,7 @@ export const getAllTransactions = async (req, res, next) => {
   try {
     const match = {};
 
-    if (req.query.id && mongoose.Schema.Types.ObjectId.isValid(req.query.id)) {
+    if (req.query.id && mongoose.Types.ObjectId.isValid(req.query.id)) {
       match.userID = new mongoose.Schema.Types.ObjectId(req.query.id);
     }
     if (req.query.type_service) match.type_service = req.query.type_service;
