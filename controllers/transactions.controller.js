@@ -6,7 +6,7 @@ export const getAllTransactions = async (req, res, next) => {
     const match = {};
 
     if (req.query.id && Types.ObjectId.isValid(req.query.id)) {
-      match.userID = new Types.ObjectId.createFromHexString(req.query.id);
+      match.userID = Types.ObjectId.createFromHexString(req.query.id);
     }
     if (req.query.type_service) match.type_service = req.query.type_service;
     if (req.query.product_category)
