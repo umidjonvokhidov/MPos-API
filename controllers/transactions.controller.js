@@ -2,26 +2,21 @@ import Transaction from "../models/transaction.model.js";
 
 export const getAllTransactions = async (req, res, next) => {
   try {
-    let transactions;
+    const match = {};
+
+    if (req.query.id) match.userID = req.query.id;
+    if (req.query.type_service) match.type_service = req.query.type_service;
+    if (req.query.product_category)
+      match.product_category = req.query.product_category;
+    if (req.query.status) match.status = req.query.status;
 
     const pipeline = [];
 
-    if (req.query.id) {
-      pipeline.push({ $match: { userID: req.query.id } });
-    }
-    if (req.query.type_service) {
-      pipeline.push({ $match: { type_service: req.query.type_service } });
-    }
-    if (req.query.product_category) {
-      pipeline.push({
-        $match: { product_category: req.query.product_category },
-      });
-    }
-    if (req.query.status) {
-      pipeline.push({ $match: { status: req.query.status } });
+    if (Object.keys(match).length > 0) {
+      pipeline.push({ $match: match });
     }
 
-    transactions = await Transaction.aggregate(pipeline);
+    const transactions = await Transaction.aggregate(pipeline);
 
     res.status(200).json({
       success: true,
