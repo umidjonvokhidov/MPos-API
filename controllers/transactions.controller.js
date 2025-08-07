@@ -10,13 +10,14 @@ export const getAllTransactions = async (req, res, next) => {
       match.product_category = req.query.product_category;
     if (req.query.status) match.status = req.query.status;
 
-    const pipeline = [];
+    let transactions;
 
-    if (Object.keys(match).length > 0) {
-      pipeline.push({ $match: match });
+    if (Object.keys(match).length === 0) {
+      transactions = await Transaction.find();
+    } else {
+      const pipeline = [{ $match: match }];
+      transactions = await Transaction.aggregate(pipeline);
     }
-
-    const transactions = await Transaction.aggregate(pipeline);
 
     res.status(200).json({
       success: true,
