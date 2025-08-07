@@ -14,7 +14,7 @@ const transactionsRouter = Router();
 transactionsRouter.use(authorize);
 
 // Waiter and above can view all transactions
-transactionsRouter.get("/", requireWaiter, getAllTransactions);
+transactionsRouter.get("/", getAllTransactions);
 
 // Users can create transactions (for customers)
 transactionsRouter.post("/", createTransaction);
@@ -23,9 +23,9 @@ transactionsRouter.post("/", createTransaction);
 transactionsRouter.get("/:id", getTransaction);
 
 // Waiter and above can update transactions
-transactionsRouter.put("/:id", requireWaiter, updateTransaction);
+transactionsRouter.put("/:id", updateTransaction);
 
 // Admin only can delete transactions
-transactionsRouter.delete("/:id", requireWaiter, deleteTransaction);
+transactionsRouter.delete("/:id", deleteTransaction);
 
 export default transactionsRouter;

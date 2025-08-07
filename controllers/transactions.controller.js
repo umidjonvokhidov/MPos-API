@@ -7,7 +7,7 @@ export const getAllTransactions = async (req, res, next) => {
     const pipeline = [];
 
     if (req.query.id) {
-      pipeline.push({ $match: { userID: req.params.id } });
+      pipeline.push({ $match: { userID: req.query.id } });
     }
     if (req.query.type_service) {
       pipeline.push({ $match: { type_service: req.query.type_service } });
