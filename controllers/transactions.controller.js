@@ -18,7 +18,22 @@ export const getAllTransactions = async (req, res, next) => {
     if (Object.keys(match).length === 0) {
       transactions = await Transaction.find();
     } else {
-      const pipeline = [{ $match: match }];
+      const pipeline = [
+        { $match: match },
+        {
+          $addFields: {
+            totalPrice: {
+              $sum: {
+                $map: {
+                  input: "$products",
+                  as: "p",
+                  in: { $multiply: ["$$p.price", "$$p.count"] },
+                },
+              },
+            },
+          },
+        },
+      ];
       transactions = await Transaction.aggregate(pipeline);
     }
 
