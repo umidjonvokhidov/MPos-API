@@ -1,12 +1,12 @@
 import Transaction from "../models/transaction.model.js";
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 
 export const getAllTransactions = async (req, res, next) => {
   try {
     const match = {};
 
-    if (req.query.id && mongoose.Types.ObjectId.isValid(req.query.id)) {
-      match.userID = new mongoose.Types.ObjectId(req.query.id);
+    if (req.query.id && Types.ObjectId.isValid(req.query.id)) {
+      match.userID = new Types.ObjectId.createFromHexString(req.query.id);
     }
     if (req.query.type_service) match.type_service = req.query.type_service;
     if (req.query.product_category)
