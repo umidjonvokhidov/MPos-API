@@ -34,7 +34,7 @@ export const createStripeCheckoutSession = async (req, res, next) => {
       await cart.save();
 
       const session = await stripe.checkout.sessions.create({
-        success_url: `${req.headers.origin}/products?success=true`,
+        success_url: `${req.headers.origin}/products?success=true&transactionId=${transaction._id}`,
         cancel_url: `${req.headers.origin}/transactions?canceled=true`,
         mode: "payment",
         metadata: {
