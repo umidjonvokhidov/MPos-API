@@ -51,14 +51,7 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "uploads"), {
-    setHeaders: (res, path) => {
-      res.set("Access-Control-Allow-Origin", "*");
-    },
-  })
-);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // const limiter = rateLimit({
 //   windowMs: 15 * 60 * 1000,
