@@ -5,9 +5,9 @@ export const getAllNotifications = async (req, res, next) => {
     let notifications;
 
     if (req.query.id) {
-      notifications = await Notification.find({ user: req.query.id });
+      notifications = await Notification.find({ user: req.query.id }).sort({ createdAt: -1 });
     } else {
-      notifications = await Notification.find();
+      notifications = await Notification.find().sort({ createdAt: -1 });
     }
 
     if (!notifications) {
