@@ -43,9 +43,10 @@ const userSchema = new mongoose.Schema(
       sparse: true,
       trim: true,
       match: [
-        /^\+?[1-9]\d{1,14}$/,
+        /^\+[1-9]\d{1,14}$/, 
         "Please enter a valid phone number with country code (e.g., +1234567890)",
       ],
+      default: undefined,
     },
     password: {
       type: String,
