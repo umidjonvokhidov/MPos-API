@@ -4,7 +4,7 @@ export const getUserCartProducts = async (req, res, next) => {
   try {
     const userCart = await Cart.findOne({ user: req.user._id }).populate(
       "products.productId"
-    );
+    ).sort({ createdAt: -1 });
 
     if (!userCart) {
       const error = new Error("Cart based on this user not found!");
