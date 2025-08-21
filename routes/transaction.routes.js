@@ -23,7 +23,7 @@ transactionsRouter.post("/", createTransaction);
 transactionsRouter.get("/:id", getTransaction);
 
 // Waiter and above can update transactions
-transactionsRouter.put("/:id", updateTransaction);
+transactionsRouter.patch("/:id", updateTransaction);
 
 // Admin only can delete transactions
 transactionsRouter.delete("/:id", deleteTransaction);
