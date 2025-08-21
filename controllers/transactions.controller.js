@@ -16,7 +16,7 @@ export const getAllTransactions = async (req, res, next) => {
     let transactions;
 
     if (Object.keys(match).length === 0) {
-      transactions = await Transaction.find();
+      transactions = await Transaction.find().sort({ createdAt: -1 });
     } else {
       const pipeline = [
         { $match: match },
@@ -33,6 +33,7 @@ export const getAllTransactions = async (req, res, next) => {
             },
           },
         },
+        { $sort: { createdAt: -1 } },
       ];
       transactions = await Transaction.aggregate(pipeline);
     }
