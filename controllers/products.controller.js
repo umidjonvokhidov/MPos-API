@@ -142,11 +142,9 @@ export const deleteProduct = async (req, res, next) => {
         filename
       );
 
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      } else {
-        console.warn(`⚠️ File not found on disk: ${filePath}`);
-      }
+      await fs.unlink(filePath).catch(() => {
+        console.warn(`⚠️ File not found, skipping delete: ${filePath}`);
+      });
     }
 
     res.status(200).json({
