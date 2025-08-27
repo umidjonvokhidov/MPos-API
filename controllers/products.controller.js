@@ -143,13 +143,9 @@ export const deleteProduct = async (req, res, next) => {
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
+      } else {
+        console.warn(`⚠️ File not found on disk: ${filePath}`);
       }
-    }
-
-    if (!product) {
-      const error = new Error("Product with this ID not found!");
-      error.statusCode = 404;
-      throw error;
     }
 
     res.status(200).json({
