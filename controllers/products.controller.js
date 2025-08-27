@@ -132,6 +132,7 @@ export const deleteProduct = async (req, res, next) => {
     if (product.image) {
       const imageUrl = new URL(product.image);
       const filename = path.basename(imageUrl.pathname);
+      const __dirname = dirname(__filename);
 
       const filePath = path.join(
         __dirname,
