@@ -143,9 +143,17 @@ export const deleteProduct = async (req, res, next) => {
         filename
       );
 
-      await fs.unlink(filePath).catch(() => {
-        console.warn(`⚠️ File not found, skipping delete: ${filePath}`);
-      });
+     fs.unlink(filePath, (err) => {
+      if (err) {
+        if (err.code === "ENOENT") {
+          console.warn(`⚠️ File not found, skipping delete: ${filePath}`);
+        } else {
+          console.error(`❌ Error deleting file: ${filePath}`, err);
+        }
+      } else {
+        console.log(`✅ File deleted: ${filePath}`);
+      }
+    });
     }
 
     res.status(200).json({
