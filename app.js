@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { PORT } from "./config/env.js";
 import authRouter from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
@@ -53,12 +54,12 @@ const __dirname = dirname(__filename);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   limit: process.env.NODE_ENV === "production" ? 50 : 100,
-// });
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: process.env.NODE_ENV === "production" ? 50 : 100,
+});
 
-// app.use(limiter);
+app.use(limiter);
 
 app.use(
   session({
@@ -127,3 +128,35 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`MPos API is running on http://localhost:${PORT}`);
   console.log(process.env.NODE_ENV);
 });
+
+// Keep the app and MongoDB connection alive (useful for platforms like Render and MongoDB free tier)
+if (process.env.NODE_ENV === "production") {
+  const KEEP_ALIVE_URL =
+    process.env.KEEP_ALIVE_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    `${process.env.BASE_URL || `http://localhost:${PORT}`}/api/v1/`;
+  const KEEP_ALIVE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+
+  const keepAlive = async () => {
+    try {
+      if (KEEP_ALIVE_URL && typeof fetch === "function") {
+        await fetch(KEEP_ALIVE_URL, { method: "GET" });
+        console.log(`[keep-alive] pinged ${KEEP_ALIVE_URL}`);
+      }
+    } catch (err) {
+      console.warn("[keep-alive] ping failed:", err?.message ?? err);
+    }
+
+    try {
+      if (mongoose.connection.readyState === 1) {
+        await mongoose.connection.db.admin().ping();
+        console.log("[keep-alive] MongoDB ping successful");
+      }
+    } catch (err) {
+      console.warn("[keep-alive] MongoDB ping failed:", err?.message ?? err);
+    }
+  };
+
+  keepAlive();
+  setInterval(keepAlive, KEEP_ALIVE_INTERVAL_MS);
+}

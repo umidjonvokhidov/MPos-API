@@ -1,6 +1,12 @@
 import { config } from "dotenv";
 
-config({ path: `.env.${process.env.NODE_ENV || "development"}.local` });
+const envPath = `.env.${process.env.NODE_ENV || "development"}.local`;
+const result = config({ path: envPath });
+
+// Fallback to root `.env` when the environment-specific file is missing.
+if (result.error) {
+  config({ path: ".env" });
+}
 
 export const {
   PORT,
