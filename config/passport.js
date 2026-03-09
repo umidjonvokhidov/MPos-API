@@ -16,7 +16,7 @@ if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && GOOGLE_CALLBACK_URL) {
         callbackURL: GOOGLE_CALLBACK_URL,
         scope: ["profile", "email"],
       },
-      async (profile, done) => {
+      async (accessToken, refreshToken, profile, done) => {
         try {
           const googleId = profile.id;
           const email = profile.emails[0].value;
